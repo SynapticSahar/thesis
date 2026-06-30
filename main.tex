@@ -147,7 +147,7 @@ Four hypotheses were tested. The first three were confirmatory, and the fourth w
 \chapter{Materials and Methods}
 The analysis had two broad parts. The first part constructed the synchronization-state representation from resting-state functional MRI and derived participant-level dynamic measures. This included preprocessing the regional signals, computing local Kuramoto synchronization, defining the seven-state atlas, validating the atlas as a working partition of a continuous state space, and summarizing each participant's occupancy, dwell time, transition probabilities, entropy, and synchronization heterogeneity. The second part tested the structure and cognitive relevance of these dynamics. This included surrogate-null tests of transition structure, generative models of transition probabilities, persistence and maximum-occupancy models, and univariate and multivariate associations between transition features and cognitive performance. Parameter values are reported where they affect the results, and the central quantities are defined formally as equations. All processing was carried out in MATLAB.
 
-\textbf{Notation.} Throughout, a participant's parcel signals are indexed by region and time; $\phi_n(t)$ denotes instantaneous phase; $q_t \in \{1, \ldots, K\}$ is the discrete state occupied at volume t; T is the number of volumes; K = 7 is the number of states; N = 100 is the number of coarse parcels; and $S_c$ is the set of fine regions in coarse parcel c, with $|S_c|$ its size. Square brackets [ \(\cdot\) ] denote the Iverson bracket, equal to 1 when the enclosed condition holds and 0 otherwise. Entropies use base-2 logarithms.
+\textbf{Notation.} Throughout, a participant's parcel signals are indexed by region and time; $\phi_n(t)$ denotes instantaneous phase; $q_t \in \{1, \ldots, K\}$ is the discrete state occupied at volume $t$; $L$ is the number of volumes; $K = 7$ is the number of states; $N = 100$ is the number of coarse parcels; and $S_c$ is the set of fine regions in coarse parcel $c$, with $|S_c|$ its size. Transition counts are denoted by $C_{ij}$, and transition probabilities by $P_{ij}$. Square brackets $[\cdot]$ denote the Iverson bracket, equal to 1 when the enclosed condition holds and 0 otherwise. Entropies use base-2 logarithms.
 
 \section{Data, state representation and measures}
 This part describes the data, the construction of the synchronization-state representation, the participant-level measures derived from it, and the behavioural measures used in the analyses of Section 2.2.
@@ -204,25 +204,43 @@ Pre-specified k-means atlas & 7 & Working partition used by the generative model
 
 \subsection{Subject-level dynamic measures}
 
-Each participant's state sequence $q_1,\ldots,q_T$ was summarized using the measures listed in Table~\ref{tab:subject_dynamic_measures}. State occupancy was defined as the fraction of volumes assigned to each state. Switch rate was defined as the fraction of consecutive volumes in which the assigned state changed. Transitions between consecutive states were counted in a $K \times K$ matrix $N$, where $K$ is the number of states. The transition count matrix was row-normalized to obtain the transition probability matrix:
-\begin{equation}
-T_{ij}=\frac{N_{ij}}{\sum_{k=1}^{K}N_{ik}}.
-\end{equation}
-The entries of $T$ are the transition probabilities used by the models in Section 2.2.
+Each participant's state sequence $q_1,\ldots,q_L$ was summarized using the measures listed in Table~\ref{tab:subject_dynamic_measures}. State occupancy was defined as the fraction of volumes assigned to each state. Switch rate was defined as the fraction of consecutive volumes in which the assigned state changed. Transitions between consecutive states were counted in a $K \times K$ matrix $C$, where $C_{ij}$ is the number of observed transitions from state $i$ to state $j$. The transition count matrix was row-normalized to obtain the transition probability matrix:
+\[
+P_{ij}
+=
+\frac{C_{ij}}{\sum_{k=1}^{K}C_{ik}}.
+\]
+The entries of $P$ are the transition probabilities used by the models in Section 2.2.
 
 Two information-theoretic measures were computed using Shannon entropy (Shannon, 1948). Occupancy entropy, $H_1$, was defined as the entropy of the participant's state occupancy distribution. Transition entropy, $H_2$, was defined as the occupancy-weighted mean of the row entropies of the transition matrix:
-\begin{equation}
-H_2=\sum_{i=1}^{K}w_i\left(-\sum_{j=1}^{K}T_{ij}\log_2 T_{ij}\right),
-\end{equation}
+\[
+H_2
+=
+\sum_{i=1}^{K}
+w_i
+\left(
+-
+\sum_{j=1}^{K}
+P_{ij}\log_2 P_{ij}
+\right),
+\]
 where $w_i$ is the relative frequency with which state $i$ served as the origin of a transition. $H_2$ was also computed after removing self-transitions. This switch-conditional version separated the diversity of switch destinations from simple persistence in the same state.
 
 Finally, spatial and temporal heterogeneity of local synchronization were summarized from $R(c,t)$. Spatial heterogeneity, $T_1$, was defined as the time-averaged dispersion of local synchronization across parcels. Temporal heterogeneity, $T_2$, was defined as the parcel-averaged dispersion of local synchronization across time:
-\begin{equation}
-T_1=\frac{1}{T}\sum_{t=1}^{T}\mathrm{std}_c\, R(c,t),
-\end{equation}
-\begin{equation}
-T_2=\frac{1}{N}\sum_{c=1}^{N}\mathrm{std}_t\, R(c,t).
-\end{equation}
+\[
+T_1
+=
+\frac{1}{L}
+\sum_{t=1}^{L}
+\operatorname{std}_c R(c,t),
+\]
+\[
+T_2
+=
+\frac{1}{N}
+\sum_{c=1}^{N}
+\operatorname{std}_t R(c,t).
+\]
 
 % \begin{table}[htbp]
 % \centering
@@ -233,7 +251,7 @@ T_2=\frac{1}{N}\sum_{c=1}^{N}\mathrm{std}_t\, R(c,t).
 % \textbf{Measure} & \textbf{Symbol} & \textbf{Meaning} \\
 % \midrule
 % State occupancy & $p_i$ & Proportion of volumes assigned to each state \\
-% Transition probability & $T_{ij}$ & Probability of moving from state $i$ to state $j$ \\
+% Transition probability & $P_{ij}$ & Probability of moving from state $i$ to state $j$ \\
 % Switch rate & $\sigma$ & Fraction of consecutive volumes that change state \\
 % Occupancy entropy & $H_1$ & Entropy of the state occupancy distribution \\
 % Transition entropy & $H_2$ & Origin-weighted mean transition-row entropy \\
@@ -254,7 +272,7 @@ T_2=\frac{1}{N}\sum_{c=1}^{N}\mathrm{std}_t\, R(c,t).
 \textbf{Measure} & \textbf{Symbol} & \textbf{Meaning} \\
 \midrule
 State occupancy & $p_i$ & Proportion of volumes assigned to each state \\
-Transition probability & $T_{ij}$ & Probability of moving from state $i$ to state $j$ \\
+Transition probability & $P_{ij}$ & Probability of moving from state $i$ to state $j$ \\
 Switch rate & $\sigma$ & Fraction of consecutive volumes that change state \\
 Occupancy entropy & $H_1$ & Entropy of the state occupancy distribution \\
 Transition entropy & $H_2$ & Origin-weighted mean transition-row entropy \\
@@ -300,15 +318,15 @@ negative log-likelihood and the Pearson correlation between predicted and empiri
 probabilities. These correlations were reported for all matrix entries, for the diagonal entries
 corresponding to self-transitions, and for the off-diagonal entries corresponding to switches
 between states. Mean absolute error and root-mean-square error were also reported. For a
-participant with state sequence \(q_1,\ldots,q_T\), the negative log-likelihood was defined as
+participant with state sequence \(q_1,\ldots,q_L\), the negative log-likelihood was defined as
 \[
 \mathrm{NLL}
 =
--\frac{1}{T-1}
-\sum_{t=1}^{T-1}
-\log \hat{T}_{q_t,q_{t+1}},
+-\frac{1}{L-1}
+\sum_{t=1}^{L-1}
+\log \hat{P}_{q_t,q_{t+1}},
 \]
-where \(\hat{T}_{q_t,q_{t+1}}\) is the model-predicted probability of the observed transition
+where \(\hat{P}_{q_t,q_{t+1}}\) is the model-predicted probability of the observed transition
 from state \(q_t\) to state \(q_{t+1}\). Lower NLL values indicate better model fit.
 
 The multivariate transition-cognition analysis was treated as an explanatory mapping rather
@@ -372,7 +390,7 @@ D_{ij}
 
 Transition probability was then modelled as an exponential decay of distance:
 \begin{equation}
-\hat{T}_{ij}
+\hat{P}_{ij}
 =
 \frac{\exp(-D_{ij}/\tau)}
 {\sum_{k=1}^{K}\exp(-D_{ik}/\tau)} .
@@ -402,10 +420,10 @@ M_{ij}
 
 The model placed a specified amount of probability on self-transitions and spread the remaining probability uniformly across supported switches:
 \begin{equation}
-\hat{T}_{ii}=q_i,
+\hat{P}_{ii}=q_i,
 \end{equation}
 \begin{equation}
-\hat{T}_{ij}
+\hat{P}_{ij}
 =
 (1-q_i)
 \frac{M_{ij}}
@@ -486,7 +504,7 @@ M_{ij}
 
 The corresponding predicted transition probabilities were
 \begin{equation}
-\hat{T}_{ij}
+\hat{P}_{ij}
 =
 \frac{
 M_{ij}\exp(-\lambda c_j + \gamma V_j)
@@ -511,10 +529,10 @@ Two model families were tested. The first family modelled the full transition ro
 
 The second family separated persistence from switch routing. Self-transitions were removed from the MOP policy, so that the model predicted only the distribution over switch destinations. The full transition matrix was then reconstructed in two stages:
 \begin{equation}
-\hat{T}_{ii}=q_i,
+\hat{P}_{ii}=q_i,
 \end{equation}
 \begin{equation}
-\hat{T}_{ij}
+\hat{P}_{ij}
 =
 (1-q_i)\pi_{ij},
 \quad j\neq i,
@@ -572,7 +590,7 @@ Models were scored using negative log-likelihood, predicted-versus-empirical cor
 
 The results are presented in the same order as the methods. First, I describe the seven-state synchronization atlas and the participant-level dynamic measures. I then test whether the observed transition sequences contain temporal structure beyond state occupancy and dwell time. Next, I compare generative models of the transition matrix, including geometry, persistence, and maximum occupancy principle models. Finally, I examine whether transition dynamics relate to cognitive performance.
 
-All analyses used the inferential framework described in Section 2.2.1, with participants as the unit of inference. The final sample included $N=182$ participants. Figures are reported in Appendix A and are cited in the text by appendix number. Tables are included in the main text.
+All analyses used the inferential framework described in Section 2.2.1, with participants as the unit of inference. The final sample included $n=182$ participants. Figures are reported in Appendix A and are cited in the text by appendix number. Tables are included in the main text.
 
 \section{State atlas and dynamic measures}
 
