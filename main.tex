@@ -1,0 +1,747 @@
+\documentclass[12pt,a4paper]{report}
+
+
+
+% This version compiles with pdfLaTeX in Overleaf.
+% It uses a Times-like font. Exact Times New Roman requires XeLaTeX or LuaLaTeX.
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{textcomp}
+\usepackage{newtxtext,newtxmath}
+\usepackage{microtype}
+\usepackage{makecell}
+\usepackage{graphicx}
+
+\usepackage{setspace}
+\onehalfspacing
+
+% amsmath is loaded by newtxmath; amssymb conflicts with newtxmath in pdfLaTeX
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{caption}
+\usepackage[hidelinks]{hyperref}
+\usepackage{chngcntr}
+\counterwithout{equation}{chapter}
+
+
+\setcounter{secnumdepth}{4}
+\setcounter{tocdepth}{3}
+\setlength{\parindent}{0.5in}
+\setlength{\parskip}{0pt}
+\raggedbottom
+
+
+
+\begin{document}
+
+% ---------- Title page ----------
+\pagenumbering{arabic}
+
+\begin{titlepage}
+\thispagestyle{empty}
+\centering
+
+
+{\large Universitat Pompeu Fabra\par}
+
+% \vspace{0.6cm}
+
+{\large
+Master's Thesis in Computational Neuroscience\\
+Brain and Cognition\par}
+
+\vspace{2.5cm}
+
+{\LARGE\bfseries
+A Vortex-Based Framework for Analyzing Brain States in Resting-State fMRI\par}
+
+\vspace{0.2cm}
+
+{\large\itshape
+Synchrony Dynamics, Transition Structure, and Cognitive Associations\par}
+
+\vspace{2cm}
+
+{\large\bfseries Author:\par}
+\vspace{0.2cm}
+{\large Mohaddeseh Hosseinzadeh\par}
+
+\vspace{0.8cm}
+
+{\large\bfseries Supervisor:\par}
+% \vspace{0.2cm}
+{\large Gustavo Deco\par}
+
+\vspace{0.8cm}
+
+{\large\bfseries Co-supervisor:\par}
+% \vspace{0.2cm}
+{\large Ruben Moreno Bote\par}
+
+\vspace{2.1cm}
+
+{\large June 2026\par}
+\vspace{1.6cm}
+
+
+% \vfill
+
+\includegraphics[
+    width=0.62\textwidth,
+    trim=29bp 145bp 20bp 149bp,
+    clip
+]{UPF-Logo.png}
+
+\vspace*{0.5cm}
+
+\end{titlepage}
+
+% ---------- Dedication page ----------
+\clearpage
+\thispagestyle{empty}
+
+
+\vspace*{1.2cm}
+
+\begin{center}
+\begin{minipage}{0.90\textwidth}
+\centering
+\large\itshape
+
+I would like to dedicate this work to my dearest brother, who has supported me unconditionally during the most difficult parts of my life, and without whose support pursuing this master's degree would not have been possible.
+
+\end{minipage}
+\end{center}
+
+
+\clearpage
+\setcounter{page}{3}
+\tableofcontents
+
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+
+At rest, brain activity moves through a limited set of recurring whole-brain patterns, or states. These states are relatively well described, but we know less about the rules that govern transitions between them, and whether these transitions carry meaningful information about cognition. This thesis addresses three primary questions: whether the state sequence is more structured than chance (against occupancy-preserving and dwell-preserving surrogates), what governs that structure (the geometric closeness of states, or a principle of keeping future options open, the maximum occupancy principle (MOP)), and whether transition features relate to cognition, using transition entropy as a univariate summary and transition probabilities as multivariate explanatory features. Resting-state 7 Tesla functional MRI from 182 Human Connectome Project participants was analysed. Cortical signals (Schaefer parcellation, coarsened to 100 regions) were summarized by a local Kuramoto synchronization measure, reduced by principal component analysis, and clustered by k-means into seven states. For each participant occupancy, dwell time, transition probabilities, and transition entropy were computed. The graded-geometry model, binary and stay/switch MOP variants, and dwell-bias and surrogate nulls were evaluated by leave-one-participant-out cross-validation with permutation, bootstrap, and false-discovery control where applicable. Entropy measures were correlated with cognitive scores, and transition probabilities were entered into regularized linear and nonlinear models to test whether the transition matrix contained multivariate cognitive information. The seven-state atlas was reproducible but continuous rather than sharply clustered, and no clustering criterion recovered a discrete count of seven. Observed sequences were far more structured than occupancy-preserving and dwell-preserving surrogates. The distance law explained where the brain tends to move when it switches from one state to another. It predicted off-diagonal transitions well, with a cross-validated correlation of about 0.54. In contrast, MOP did not improve the prediction of switching between states. Its contribution was mainly in explaining persistence, meaning how likely the brain is to remain in the same state, which corresponds to the diagonal of the transition matrix. Transition entropy was positively associated with cognition across all entropy measures, strongest for working memory (r = 0.21). A regularized linear model showed above-null explanatory accuracy for working memory and cognitive flexibility, strongest for working memory (r = 0.26), while nonlinear models gave no advantage.
+
+
+\chapter{Introduction}
+Resting brain activity is not random background noise. Early resting-state fMRI work showed that spontaneous low-frequency BOLD fluctuations are correlated across functionally related brain regions, laying the basis for what is now called resting-state functional connectivity (Biswal et al., 1995). More recent work has shown that this activity can also be described dynamically, as a sequence of recurring whole-brain connectivity states. These states have been recovered using clustering of time-resolved functional connectivity (Allen et al., 2014) and hidden Markov models (Vidaurre et al., 2017). Phase-based approaches provide another way to describe these dynamics by estimating the instantaneous phase of band-limited signals and measuring time-varying synchronization between brain regions (Glerean et al., 2012; Kuramoto, 1984). In resting-state fMRI, such approaches have been used to study recurrent phase-coherence states, metastability, and switching between functional configurations (Cabral et al., 2017; Deco et al., 2017). More recently, cortical activity has also been described through turbulence-like fluctuations of local synchrony, often quantified using local Kuramoto-based synchronization measures (Deco \& Kringelbach, 2020; Escrichs et al., 2022). Two questions remain harder than describing the states themselves. First, what governs transitions between states? Prior work shows that brain-state sequences are not random and that their transitions can be hierarchically organized in time (Vidaurre et al., 2017). However, the rules that route one state to the next are still less directly modelled than the states themselves. This thesis therefore compares simple transition models, including a geometric distance law in state space, persistence-based accounts, and the maximum occupancy principle. The maximum occupancy principle was recently proposed as a general theory of behaviour in which agents tend to preserve access to a broad range of future action-state paths (Ram\'{i}rez-Ruiz et al., 2024). Here, it is treated as a theoretical hypothesis for brain-state transitions, not as an already established account of resting-state dynamics.
+
+Second, do these transition dynamics carry meaningful individual differences in cognition? Connectome-based predictive modelling has shown that brain connectivity features can be used to predict behavioural variation across individuals (Shen et al., 2017). In dynamic functional connectivity, switching between connectivity states has also been related to cognitive performance (Cabral et al., 2017). At the same time, brain-behaviour associations in neuroimaging are often small and require careful validation, especially when sample sizes are modest (Marek et al., 2022). For this reason, any relationship between transition dynamics and cognition should be interpreted as evidence for individual-difference structure, not as a strong standalone biomarker. This thesis studies transition dynamics between resting-state synchronization states in the Human Connectome Project Young Adult dataset (Van Essen et al., 2013). The analysis uses 7 T resting-state fMRI data from participants who passed the inclusion and preprocessing criteria described in the Methods chapter. The final analytic sample contained 182 participants. Cortical signals were parcellated using the Schaefer atlas, coarsened to 100 cortical regions, and summarized using a local synchronization measure based on phase alignment (Schaefer et al., 2018; Deco \& Kringelbach, 2020; Escrichs et al., 2022). The thesis focuses on descriptive state dynamics, generative models of the transition matrix, and associations between transition dynamics and cognitive performance, using the HCP behavioural battery as the source of cognitive measures (Barch et al., 2013). It does not address task-evoked states, longitudinal change, clinical populations, or topological phase singularities. Three research questions are addressed. First, is the observed sequence of states more structured than would be expected from each participant's state occupancy and dwell-time profile alone? Second, what governs the routing of transitions between states, and can this be better explained by geometric distance, maximum occupancy, or simple persistence? Third, do individual differences in transition dynamics relate to cognitive performance?
+
+Four hypotheses were tested. The first three were confirmatory, and the fourth was exploratory because individual-difference effects were expected to be small.
+
+\textbf{H1 (structure).} Transition sequences are more structured than chance. Transition entropy should be lower than under occupancy-preserving and dwell-preserving surrogate sequences, with a consistent effect across participants.
+
+\textbf{H2 (geometry).} Transition routing follows distance in synchronization space. An exponential distance-law model should reproduce the empirical off-diagonal transition structure, outperform a state-label permutation null, and generalize under leave-one-participant-out cross-validation.
+
+\textbf{H3 (maximum occupancy).} Maximum occupancy improves transition modelling beyond binary topology. Adding a destination cost to a recursive-value MOP model should improve held-out prediction over pure topology. In the stay/switch decomposition, state-specific stay probabilities should improve persistence modelling, while the destination cost should improve off-diagonal switch routing.
+
+
+\textbf{H4 (cognition).} Transition diversity relates to cognition. Transition probabilities should show above-null multivariate explanatory association with cognitive scores under a label-shuffle null. This signal is expected to be modest and mainly captured by linear models, with nonlinear models tested as exploratory alternatives.
+
+
+
+\chapter{Materials and Methods}
+The analysis proceeds in two stages. The first derives a small set of recurring whole-brain synchronization states from resting-state functional MRI and summarizes each participant's state dynamics. The second tests whether a seven-state description is an adequate model of the underlying state-space density. Parameter values are reported where they affect the results, and the central quantities are defined formally as equations. All processing was carried out in MATLAB (The MathWorks, Natick, MA, USA; version to be confirmed).
+
+\textbf{Notation.} Throughout, a participant's parcel signals are indexed by region and time; $\phi_n(t)$ denotes instantaneous phase; $q_t \in \{1, \ldots, K\}$ is the discrete state occupied at volume t; T is the number of volumes; K = 7 is the number of states; N = 100 is the number of coarse parcels; and $S_c$ is the set of fine regions in coarse parcel c, with $|S_c|$ its size. Square brackets [ \(\cdot\) ] denote the Iverson bracket, equal to 1 when the enclosed condition holds and 0 otherwise. Entropies use base-2 logarithms.
+
+\section{Data, state representation and measures}
+This part describes the data, the construction of the synchronization-state representation, the participant-level measures derived from it, and the behavioural measures used in the analyses of Section 3.2.
+
+\subsection{Preprocessing and synchronization features}
+
+For each participant, every regional time series was screened for missing values. Regions that were entirely invalid for a participant were excluded from that participant's coarse-parcel averages, and isolated invalid samples were interpolated. Each remaining time series was band-pass filtered between 0.01 and 0.10 Hz using a zero-phase fourth-order Butterworth filter. The frequency range was chosen to retain the low-frequency fluctuations commonly studied in resting-state fMRI (Biswal et al., 1995), and the filter type follows the classical Butterworth design (Butterworth, 1930). Each filtered time series was then standardized to zero mean and unit variance and averaged within each of the 100 coarse parcels.
+
+Because the coarse parcels contained unequal numbers of fine regions, including eight parcels with five or fewer fine regions, the dependence of synchronization on parcel size was checked. This dependence was present in the raw signal ($r = -0.325$, $p \approx 0.001$), but was absent from the standardized features used for clustering ($|r| \leq 0.13$).
+
+Instantaneous phase was obtained from the analytic signal of each band-limited time series using the Hilbert transform. This phase-based approach follows previous work using fMRI phase synchronization to measure dynamic functional connectivity (Glerean et al., 2012). Whole-brain synchronization at each volume was summarized using the Kuramoto order parameter across the 100 coarse parcels (Kuramoto, 1984). Each participant's global synchrony was defined as the temporal mean of this global order parameter, and metastability was defined as its temporal standard deviation, following previous work on resting-state metastability and whole-brain dynamics (Deco et al., 2017).
+
+The state representation was based on a local order parameter. For each coarse parcel $c$ and volume $t$, local synchronization was defined as the phase coherence among the fine regions belonging to that parcel:
+\begin{equation}
+R(c,t)=\left|\frac{1}{|S_c|}\sum_{j\in S_c} e^{i\phi_j(t)}\right|,
+\end{equation}
+where $S_c$ is the set of fine regions assigned to coarse parcel $c$, $|S_c|$ is the number of fine regions in that parcel, and $\phi_j(t)$ is the instantaneous phase of fine region $j$ at time $t$. This measure ranges from 0, meaning low phase coherence, to 1, meaning complete phase alignment. Local Kuramoto-based synchronization measures have been used to describe turbulence-like fluctuations in human brain activity (Deco \& Kringelbach, 2020). The resulting time-resolved map $R(c,t)$ of local synchronization across the 100 parcels formed the basis of the state analysis and the heterogeneity measures described in Section 3.1.4.
+
+\subsection{Definition of synchronization states}
+
+Local synchronization maps from all participants and all time points were pooled into a single collection of instantaneous spatial patterns. For each pattern, the spatial mean was subtracted to remove the overall level of synchronization. This step made the analysis sensitive to the spatial configuration of local synchronization rather than to global synchronization amplitude. The parcel-wise values were then iteratively standardized so that parcels with different numbers of fine regions did not dominate the distances between patterns.
+
+The resulting patterns were reduced to 50 principal components using principal component analysis (Jolliffe, 2002). These components explained 73.9\% of the variance, with 7.0\% explained by the first component and 32.5\% by the first ten components. The reduced patterns were then partitioned using k-means clustering with squared Euclidean distance. This follows the general approach of dynamic functional connectivity studies that define recurring brain states by clustering time-resolved whole-brain patterns (Allen et al., 2014; Cabral et al., 2017).
+
+Seven states were adopted as the primary atlas. This number was fixed in advance to match the seven-state generative models examined later, rather than selected from the data. It is therefore treated as a pre-specified modelling choice throughout the thesis. As a descriptive check, clustering solutions from two to thirty states were compared using within-cluster dispersion and average silhouette width. Silhouette width was used as a standard cluster-validity measure (Rousseeuw, 1987). Silhouette values were low across the full range and were highest at two clusters, 0.107 compared with 0.025 at seven clusters. This pattern is consistent with a continuous state space rather than a sharply separated set of discrete clusters. The seven-state atlas is therefore interpreted as a working partition of the dynamics, not as evidence for seven discrete attractors.
+
+Atlas stability was assessed in two ways. First, repeated clustering of resampled time points reproduced the seven-state solution closely, with a mean adjusted Rand index of 0.82. Second, re-deriving the atlas from independent halves of the participants gave a more variable solution, with a mean adjusted Rand index of 0.64. The adjusted Rand index was used to quantify agreement between clustering solutions while correcting for chance agreement (Hubert \& Arabie, 1985). A control analysis clustered the synchronization maps without first removing the global synchronization level. This produced a markedly different atlas, with an adjusted Rand index of 0.22 relative to the primary solution. The global synchronization level explained 25\% of the variance in the primary state labels, but 88\% of the variance in the uncorrected state labels. This confirmed that removing the global level made the primary states reflect spatial configuration rather than overall synchronization amplitude.
+
+Each participant's data were assigned to the fixed group atlas without individual re-clustering. The participant's local synchronization maps were standardized using the group parameters, projected onto the group principal components, and labelled according to the nearest of the seven group centroids. The resulting state sequences were used for all subsequent measures. This kept the state representation identical across participants and made later cross-validation conditional on the same fixed atlas.
+
+\subsubsection{Distributional validation of the seven-state description}
+
+Because the number of states was fixed by design, a separate analysis tested whether seven components provided an adequate description of the pooled density in the same 50-dimensional PCA space. This analysis also tested how closely probabilistic density components corresponded to the seven k-means states. Gaussian mixture models with one to sixty components were fitted using expectation-maximization with diagonal covariance matrices, regularization, and multiple restarts for numerical stability (McLachlan \& Peel, 2000).
+
+Model complexity was evaluated using both penalized in-sample fit and out-of-sample fit. The Bayesian information criterion was used as the penalized in-sample criterion (Schwarz, 1978). Out-of-sample likelihood was estimated using repeated five-fold participant-blocked cross-validation, where whole participants, not individual time points, were held out. Temporally adjacent samples were thinned to reduce the influence of autocorrelation. A one-standard-error rule was used to identify a parsimonious near-optimal model from the cross-validation curve (Hastie et al., 2009). A heavy-tailed single-component Student-$t$ distribution was also included as an elliptical baseline. The correspondence between mixture components and the seven k-means states was quantified using adjusted Rand index, normalized mutual information, and cluster purity.
+
+The criteria did not converge on seven components (Table~\ref{tab:gmm_density_complexity}). The Bayesian information criterion was minimized at nine components, whereas out-of-sample likelihood continued to improve up to the largest models tested. The one-standard-error rule indicated fifteen components as the most parsimonious near-optimal choice. A single Gaussian was clearly inadequate, but the correspondence between the Gaussian mixture components and the seven-state atlas was weak. For the seven-component mixture model, the adjusted Rand index against the seven k-means states was 0.06, and correspondence did not strengthen at higher component counts. These results indicate that the state-space density is complex and non-elliptical, but they do not identify a single optimal number of discrete states. The seven-state atlas is therefore retained as a pre-specified working description, not as a density-derived optimum.
+
+\begin{table}[htbp]
+\centering
+\caption{Density-complexity criteria for the Gaussian mixture analysis. All criteria favoured more than seven components. This supports a complex, non-elliptical density rather than a recovered seven-state density optimum.}
+\label{tab:gmm_density_complexity}
+\begin{tabular}{p{0.38\textwidth} p{0.18\textwidth} p{0.34\textwidth}}
+\toprule
+\textbf{Selection criterion} & \textbf{Components} & \textbf{Interpretation} \\
+\midrule
+Penalized in-sample fit, BIC & 9 & Best training fit after a complexity penalty \\
+Out-of-sample likelihood, held-out participants & 50 & Best density on unseen participants within the tested range \\
+One-standard-error rule, held-out participants & 15 & Most parsimonious near-optimal choice \\
+Pre-specified k-means atlas & 7 & Working partition used by the generative models \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Subject-level dynamic measures}
+
+Each participant's state sequence $q_1,\ldots,q_T$ was summarized using the measures listed in Table~\ref{tab:subject_dynamic_measures}. State occupancy was defined as the fraction of volumes assigned to each state. Switch rate was defined as the fraction of consecutive volumes in which the assigned state changed. Transitions between consecutive states were counted in a $K \times K$ matrix $N$, where $K$ is the number of states. The transition count matrix was row-normalized to obtain the transition probability matrix:
+\begin{equation}
+T_{ij}=\frac{N_{ij}}{\sum_{k=1}^{K}N_{ik}}.
+\end{equation}
+The entries of $T$ are the transition probabilities used by the models in Section 3.2.
+
+Two information-theoretic measures were computed using Shannon entropy (Shannon, 1948). Occupancy entropy, $H_1$, was defined as the entropy of the participant's state occupancy distribution. Transition entropy, $H_2$, was defined as the occupancy-weighted mean of the row entropies of the transition matrix:
+\begin{equation}
+H_2=\sum_{i=1}^{K}w_i\left(-\sum_{j=1}^{K}T_{ij}\log_2 T_{ij}\right),
+\end{equation}
+where $w_i$ is the relative frequency with which state $i$ served as the origin of a transition. $H_2$ was also computed after removing self-transitions. This switch-conditional version separated the diversity of switch destinations from simple persistence in the same state.
+
+Finally, spatial and temporal heterogeneity of local synchronization were summarized from $R(c,t)$. Spatial heterogeneity, $T_1$, was defined as the time-averaged dispersion of local synchronization across parcels. Temporal heterogeneity, $T_2$, was defined as the parcel-averaged dispersion of local synchronization across time:
+\begin{equation}
+T_1=\frac{1}{T}\sum_{t=1}^{T}\mathrm{std}_c\, R(c,t),
+\end{equation}
+\begin{equation}
+T_2=\frac{1}{N}\sum_{c=1}^{N}\mathrm{std}_t\, R(c,t).
+\end{equation}
+
+% \begin{table}[htbp]
+% \centering
+% \caption{Subject-level dynamic measures. All entropy measures used base-2 logarithms (Shannon, 1948).}
+% \label{tab:subject_dynamic_measures}
+% \begin{tabular}{p{0.34\textwidth} p{0.20\textwidth} p{0.36\textwidth}}
+% \toprule
+% \textbf{Measure} & \textbf{Symbol} & \textbf{Meaning} \\
+% \midrule
+% State occupancy & $p_i$ & Proportion of volumes assigned to each state \\
+% Transition probability & $T_{ij}$ & Probability of moving from state $i$ to state $j$ \\
+% Switch rate & $\sigma$ & Fraction of consecutive volumes that change state \\
+% Occupancy entropy & $H_1$ & Entropy of the state occupancy distribution \\
+% Transition entropy & $H_2$ & Origin-weighted mean transition-row entropy \\
+% Switch-conditional entropy & $H_{2,\mathrm{off}}$ & Transition entropy after excluding self-transitions \\
+% Synchronization heterogeneity & $T_1, T_2$ & Spatial and temporal dispersion of local synchronization \\
+% Global synchrony and metastability & $S, M$ & Temporal mean and temporal standard deviation of the global order parameter \\
+% \bottomrule
+% \end{tabular}
+% \end{table}
+\begin{table}[htbp]
+\centering
+\caption{Subject-level dynamic measures. All entropy measures used base-2 logarithms (Shannon, 1948).}
+\label{tab:subject_dynamic_measures}
+\small
+\renewcommand{\arraystretch}{1.05}
+\begin{tabular}{p{0.30\textwidth} p{0.17\textwidth} p{0.42\textwidth}}
+\toprule
+\textbf{Measure} & \textbf{Symbol} & \textbf{Meaning} \\
+\midrule
+State occupancy & $p_i$ & Proportion of volumes assigned to each state \\
+Transition probability & $T_{ij}$ & Probability of moving from state $i$ to state $j$ \\
+Switch rate & $\sigma$ & Fraction of consecutive volumes that change state \\
+Occupancy entropy & $H_1$ & Entropy of the state occupancy distribution \\
+Transition entropy & $H_2$ & Origin-weighted mean transition-row entropy \\
+Switch-conditional entropy & $H_{2,\mathrm{off}}$ & Transition entropy after excluding self-transitions \\
+Synchronization heterogeneity & $T_1, T_2$ & Spatial and temporal dispersion of local synchronization \\
+Global synchrony and metastability & $S, M$ & Temporal mean and temporal standard deviation of the global order parameter \\
+\bottomrule
+\end{tabular}
+\end{table}
+Two measures require careful interpretation. $T_1$ and $T_2$ describe spatial and temporal variability in local synchronization. Following the established framework of brain turbulence (Deco \& Kringelbach, 2020), these metrics characterize the underlying vortex space of the system, where regional fluctuations in the Kuramoto order parameter capture the structural diversity of the synchronization states. Transition entropy $H_2$ was almost perfectly correlated with switch rate across participants ($r = 0.99$). It is therefore treated as a persistence-sensitive measure. The switch-conditional version, $H_{2,\mathrm{off}}$, is used when the target quantity is the diversity of destinations after a switch has occurred.
+
+
+\subsection{Quality control}
+
+No participant was excluded on data-quality grounds. Motion and nuisance records were not available alongside the parcel time series, so acquisition-level quality control could not be repeated in the present analysis. A small number of participants were flagged as statistical outliers based on derived measures rather than acquisition quality. Thirty-one participants were flagged, including nine extreme outliers. These participants were retained in the main analysis and used in sensitivity analyses. One participant was also designated as the primary single-case sensitivity check. Each run of the analysis was stored with a timestamp, a checksum manifest of its outputs, and a record of the computing environment, allowing the results to be reproduced exactly.
+
+\subsection{Behavioural measures}
+
+Cognitive performance was measured using cognitive variables from the HCP behavioural battery. The HCP behavioural battery was designed to measure individual differences in cognitive, emotional, sensory, and motor function (Barch et al., 2013). The cognitive variables used here were drawn from the NIH Toolbox cognition battery and Penn computerized neurocognitive tests, which assess domains such as fluid reasoning, processing speed, cognitive flexibility, working memory, inhibitory control, and vocabulary knowledge (Weintraub et al., 2013; Gur et al., 2010).
+
+A general cognitive factor, $g$, was estimated using one-factor maximum-likelihood factor analysis. Each standardized cognitive score was modelled as a loading on a single common factor plus a test-specific residual. The estimated factor score was used as the participant's general cognitive score. This follows the classical idea that positive correlations across cognitive tests can be summarized by a general cognitive factor (Spearman, 1904). Participants with missing entries in the cognitive variables used for this factor model were excluded from the estimation of $g$.
+
+\section{Inferential and modelling analyses}
+
+This section describes the inferential and modelling analyses applied to the participant-level measures defined in Section 3.1. The analyses address three main questions. First, they test whether the observed state sequences contain transition structure beyond what would be expected from state occupancy and dwell time alone. Second, they test whether individual differences in transition dynamics are related to cognitive performance. Third, they compare generative models of the transition matrix, including geometric, persistence-based, and maximum-occupancy models, and test whether transition features show explanatory associations with cognition.
+
+\subsection{Statistical inference framework}
+
+All analyses used participants as the unit of inference. Null distributions were therefore
+constructed by permuting or resampling participants, behavioural labels, or participant-level
+summary statistics, rather than treating individual volumes or transitions as independent
+observations. Unless stated otherwise, all analyses were conditional on the fixed seven-state
+atlas defined in Section 2.1.2. The PCA projection, cluster centroids, and state labels were not
+re-estimated inside each test or cross-validation fold.
+
+Generative transition models were evaluated using leave-one-participant-out cross-validation.
+In each fold, model parameters were estimated from all participants except one and tested on
+the held-out participant. This procedure was used to assess whether transition models fitted on
+the group generalized to individual held-out transition matrices, conditional on the fixed atlas.
+
+For each generative model, the fit of the predicted transition matrix was summarized using
+negative log-likelihood and the Pearson correlation between predicted and empirical transition
+probabilities. These correlations were reported for all matrix entries, for the diagonal entries
+corresponding to self-transitions, and for the off-diagonal entries corresponding to switches
+between states. Mean absolute error and root-mean-square error were also reported. For a
+participant with state sequence \(q_1,\ldots,q_T\), the negative log-likelihood was defined as
+\[
+\mathrm{NLL}
+=
+-\frac{1}{T-1}
+\sum_{t=1}^{T-1}
+\log \hat{T}_{q_t,q_{t+1}},
+\]
+where \(\hat{T}_{q_t,q_{t+1}}\) is the model-predicted probability of the observed transition
+from state \(q_t\) to state \(q_{t+1}\). Lower NLL values indicate better model fit.
+
+The multivariate transition-cognition analysis was treated as an explanatory mapping rather
+than as a leakage-free external prediction analysis. For each cognitive target, an outcome-specific
+feature mask was estimated before the repeated cross-validation procedure using all valid
+participants. This mask was based on full-sample transition-cognition correlations and a selected
+correlation threshold, as described in Section 2.2.6. The regularized model was then evaluated
+using 100 repeats of 10-fold cross-validation. Within each fold, elastic-net model fitting and
+penalty selection were performed using only the training participants. The resulting
+cross-validated correlations and coefficients of determination therefore quantify explanatory
+accuracy conditional on the full-sample feature mask. They should not be interpreted as fully
+unbiased estimates of prediction accuracy for new participants.
+
+Model comparisons used paired participant-level tests. For each participant, the difference
+between two models was computed on the relevant fit metric and oriented so that positive values
+favoured the model of interest. Significance was assessed using a sign-flip permutation test,
+following the logic of non-parametric permutation inference in neuroimaging (Nichols \&
+Holmes, 2002). Monte Carlo \(p\)-values used an add-one correction so that \(p\)-values could not
+be zero when permutations were randomly sampled (Phipson \& Smyth, 2010). Group effects
+were reported with 95\% bootstrap confidence intervals (Efron \& Tibshirani, 1993). Families
+of related tests were controlled using the Benjamini-Hochberg false-discovery-rate procedure
+(Benjamini \& Hochberg, 1995). Sensitivity analyses repeated the main tests after applying the
+statistical-extreme exclusions and single-participant leave-out analysis described in Section 2.1.4.
+
+
+
+\subsection{Surrogate-null testing of transition structure}
+
+A surrogate-data analysis tested whether the observed state sequences were more temporally structured than expected from simple properties of each participant's sequence. Surrogate testing provides a way to compare an observed time series against synthetic sequences that preserve selected properties of the data while destroying others (Theiler et al., 1992). The main test statistic was transition entropy, $H_2$, defined in Section 3.1.4. Lower transition entropy indicates more predictable transitions, whereas higher transition entropy indicates more diffuse transition patterns.
+
+Two surrogate null models were used. The first was an occupancy-preserving null. For each participant, the state labels were randomly permuted in time. This preserved the number of volumes and the total occupancy of each state, but destroyed temporal order, dwell durations, and transition dependencies.
+
+The second was a dwell-preserving null. For each participant, the sequence was decomposed into runs of consecutive identical states. The order of these runs was then randomly permuted while keeping their lengths fixed. This preserved both state occupancy and the dwell-time distribution. Departures from this null therefore indicate sequential structure beyond simple persistence. When possible, the permutation avoided placing two runs of the same state next to each other, since this would merge runs and change the dwell-time distribution.
+
+For each participant and each null model, 5,000 surrogate sequences were generated. Transition entropy was recomputed for every surrogate sequence. Surrogates were evaluated both at the participant level and at the group level, where one surrogate sequence per participant was pooled to form a group transition matrix.
+
+For each participant, the effect was summarized as the difference between the observed $H_2$ and the mean surrogate $H_2$. This difference was also standardized by the surrogate standard deviation to obtain a $z$-score. A negative observed-minus-surrogate difference means that the real sequence had lower transition entropy than expected under the null, and therefore stronger temporal structure. One-sided and two-sided $p$-values were read directly from the surrogate distribution with the add-one correction.
+
+Population-level inference used the sign-flip procedure described in Section 3.2.1 on the participant-level observed-minus-surrogate differences. The test was oriented so that positive values indicated stronger temporal structure than the null. Bootstrap confidence intervals were computed for the mean effect, and false-discovery-rate correction was applied across the planned family of entropy tests. This family included full transition entropy and self-transition-free entropy under both the occupancy-preserving and dwell-preserving nulls.
+
+As a supplementary analysis, the same surrogate tests were repeated after removing self-transitions. This separated structure in the choice of switch destination from structure caused by persistence in the same state. This analysis is motivated by previous evidence that resting brain-state sequences are not random and can show hierarchical temporal organization (Vidaurre et al., 2017).
+
+\subsection{Entropy-cognition associations}
+
+The association between transition dynamics and cognition was tested at the participant level. Four normalized entropy measures from Section 3.1.4 were related to seven cognitive outcomes: the general cognitive factor $g$ and six individual cognitive scores. This produced 28 planned measure-outcome pairs.
+
+For each pair, the primary association measure was the Pearson correlation. A Spearman rank correlation was also computed as a robustness check for monotonic but non-linear associations. Statistical significance was assessed using a label-shuffle permutation null. In each permutation, cognitive scores were randomly reassigned across participants, and the correlation was recomputed. The two-sided $p$-value was the add-one-corrected proportion of permutations whose absolute correlation was at least as large as the observed absolute correlation.
+
+Each association was reported with a 95\% bootstrap confidence interval. A leave-one-participant-out influence analysis was also performed by recomputing each correlation after removing one participant at a time. False-discovery-rate correction was applied separately within the Pearson, permutation, and Spearman families.
+
+Two robustness analyses were performed. First, each association was recomputed using the quality-control and single-participant sensitivity samples described in Sections 3.1.5 and 3.2.1. Second, partial correlations were used to test whether the entropy-cognition associations remained after accounting for related dynamic measures. Entropy and cognitive scores were residualized with respect to standardized covariates, including global synchrony and metastability, switch rate and maximum occupancy, and the full set of these covariates together. Significance was assessed using the standard $t$-test for partial correlations with $n-k-2$ degrees of freedom, where $k$ is the number of covariates. False-discovery-rate correction was applied within each sample and covariate set.
+
+\subsection{Graded-geometry model of transitions}
+
+The first generative model tested whether transitions between synchronization states are governed by their distance in state space. Each state was represented by its centroid, $\boldsymbol{\mu}_i$, defined as the cluster centre in the 50-dimensional PCA space described in Section 3.1.3. The distance between states $i$ and $j$ was measured as the Euclidean distance between their centroids:
+\begin{equation}
+D_{ij}
+=
+\left\lVert \boldsymbol{\mu}_i - \boldsymbol{\mu}_j \right\rVert .
+\end{equation}
+
+Transition probability was then modelled as an exponential decay of distance:
+\begin{equation}
+\hat{T}_{ij}
+=
+\frac{\exp(-D_{ij}/\tau)}
+{\sum_{k=1}^{K}\exp(-D_{ik}/\tau)} .
+\end{equation}
+
+Here, $\tau$ is the only free parameter and controls the spatial scale of the transition rule. Small $\tau$ values make transitions strongly local, favouring nearby states, whereas larger $\tau$ values make the predicted transition distribution more diffuse. $\tau$ was selected over a fixed logarithmic grid scaled to the mean centroid distance, by maximizing the Pearson correlation between predicted and empirical off-diagonal transition probabilities.
+
+The model was first fit to the pooled group transition matrix and evaluated using the metrics described in Section 3.2.1. The confirmatory test used an exact state-label permutation null. The seven centroids were reassigned to the empirical state labels for all $7! = 5{,}040$ possible relabellings, and $\tau$ was refit for each relabelling. The observed off-diagonal fit was then compared with this exact null distribution, giving an upper-tail permutation $p$-value. This follows the logic of non-parametric permutation inference, where significance is assessed by comparing the observed statistic with the distribution obtained under valid relabellings of the data (Nichols \& Holmes, 2002; Winkler et al., 2014).
+
+Generalization was assessed using leave-one-participant-out cross-validation. In each fold, $\tau$ was retuned on the training participants over the same fixed grid, independently of the full-sample optimum. The resulting transition matrix was then scored against the held-out participant. Because the centroids and state labels were fixed in advance, this procedure tested generalization of the distance law conditional on the frozen atlas. It did not refit the PCA space, cluster centroids, or state labels within each fold.
+
+Ideally, permutation inference and cross-validation in the HCP dataset would use family-clustered resampling to preserve exchangeability structure among genetically related participants (Winkler et al., 2014). Because family identifiers were unavailable for our specific sample, held-out participant correlations are reported descriptively, and the exact state-label permutation null is treated as the primary confirmatory test. Permutation $p$-values used the standard non-zero correction when based on sampled rather than exhaustive permutations (Phipson \& Smyth, 2010), and families of related tests were corrected using the Benjamini-Hochberg false-discovery-rate procedure (Benjamini \& Hochberg, 1995).
+
+As an exploratory behavioural analysis, each participant's held-out off-diagonal and diagonal model fits were related to the cognitive outcomes described in Section 3.1.6. These associations were tested using partial correlations controlling for age and sex, with false-discovery-rate correction across cognitive targets. The diagonal fit was interpreted cautiously, because the distance-law model does not include a separate persistence term. Therefore, diagonal performance cannot be taken as evidence that geometry explains dwell time.
+
+\subsection{Persistence, or dwell-bias, null models}
+
+The persistence analysis tested how much of the transition matrix could be explained without geometry. These models used only the binary transition support,
+\begin{equation}
+M_{ij}
+=
+\begin{cases}
+1, & \text{if transition } i \rightarrow j \text{ occurred in the training data},\\
+0, & \text{otherwise}.
+\end{cases}
+\end{equation}
+
+The model placed a specified amount of probability on self-transitions and spread the remaining probability uniformly across supported switches:
+\begin{equation}
+\hat{T}_{ii}=q_i,
+\end{equation}
+\begin{equation}
+\hat{T}_{ij}
+=
+(1-q_i)
+\frac{M_{ij}}
+{\sum_{k\neq i}M_{ik}},
+\quad j\neq i.
+\end{equation}
+
+Two versions were compared. In the empirical-stay model, $q_i$ was the training self-transition probability for state $i$. In the global-stay model, $q_i$ was replaced by a single pooled self-transition probability shared by all states. The two models therefore differed only in whether persistence was state-specific. Neither model used geometric distance to route switches.
+
+Both models were evaluated in the full sample and using leave-one-participant-out cross-validation. In each fold, the transition support and stay probabilities were estimated from the training participants only. Models were scored using negative log-likelihood, predicted-versus-empirical correlation for all entries, diagonal entries, and off-diagonal entries, as well as error measures. A paired sign-flip test compared the empirical-stay model against the global-stay model. An improvement restricted to the diagonal or the stay-switch split would indicate that the gain came from state-specific persistence rather than from improved off-diagonal routing.
+
+% \subsection{Multivariate explanatory mapping of transition features to cognition}
+
+% The multivariate analyses tested whether individual transition matrices carried information about cognition. This follows the broader logic of connectome-based predictive modelling, where brain connectivity features are used to predict individual behavioural differences under cross-validation (Shen et al., 2017).
+
+% For each participant, the $7 \times 7$ transition matrix was flattened into a 49-dimensional feature vector. Five cognitive targets were predicted: List Sorting, Penn Matrix Reasoning, Flanker, Dimensional Change Card Sort, and the general cognitive factor $g$. Because the primary goal of this modelling phase was statistical inference, specifically to identify the transition features most strongly associated with cognitive differences, an outcome-specific feature mask was estimated on the full sample by retaining transition entries whose univariate correlation with the target exceeded a predefined threshold. The retained features were then entered into a ridge-dominant elastic net model (Zou \& Hastie, 2005). The model coefficients $\boldsymbol{\beta}$ minimized
+% \begin{equation}
+% \frac{1}{2n}
+% \sum_{i=1}^{n}
+% \left(y_i-\mathbf{x}_i^\top \boldsymbol{\beta}\right)^2
+% +
+% \lambda
+% \left[
+% \alpha \left\lVert \boldsymbol{\beta} \right\rVert_1
+% +
+% \frac{1-\alpha}{2}
+% \left\lVert \boldsymbol{\beta} \right\rVert_2^2
+% \right].
+% \end{equation}
+
+% The mixing parameter was fixed at $\alpha=0.01$, making the model ridge-dominant while still allowing weak sparsity. The penalty strength $\lambda$ was selected by inner cross-validation inside each outer training fold. Predictive accuracy was defined as the correlation between predicted and observed cognitive scores across held-out participants, averaged across 100 repeats of 10-fold cross-validation. The coefficient of determination was also reported.
+
+% Prediction significance was tested using a label-shuffle null. In each permutation, cognitive targets were shuffled across participants and the full modelling procedure, including feature selection and hyperparameter tuning, was repeated. This tested whether the observed prediction accuracy exceeded what would be expected from the same pipeline applied to behaviourally meaningless labels.
+
+% Three non-linear regressors were compared with the elastic net using the same outer cross-validation splits and the same within-fold feature-screening procedure: support vector regression with a Gaussian kernel (Drucker et al., 1997), random forests (Breiman, 2001), and gradient-boosted regression trees (Friedman, 2001). All standardization and hyperparameter tuning were performed inside the training data of each fold. Each non-linear model was compared with the elastic net using paired differences in held-out accuracy across folds and repeats. The paired differences were tested using the sign-flip procedure described in Section 3.2.1, with false-discovery-rate correction across targets. A fully retuned label-shuffle null was also computed for each model.
+
+\subsection{Multivariate explanatory mapping of transition features to cognition}
+\label{sec:multivariate_explanatory_mapping}
+
+The multivariate analyses tested whether individual transition matrices contained structured information related to cognition. This follows the broader logic of connectome-based predictive modelling, where brain connectivity features are related to individual behavioural differences under cross-validation (Shen et al., 2017). In the present thesis, however, this modelling phase was used primarily as an explanatory analysis. The aim was to assess whether transition features carried a reliable cognitive signal and to identify the transition entries most associated with cognitive differences, rather than to estimate unbiased out-of-sample biomarker performance.
+
+For each participant, the $7 \times 7$ transition matrix was flattened into a 49-dimensional feature vector. Five cognitive targets were modelled: List Sorting, Penn Matrix Reasoning, Flanker, Dimensional Change Card Sort, and the general cognitive factor $g$. 
+Because the primary goal was feature-level inference, an outcome-specific feature mask was estimated on the full sample. For each cognitive target, transition-cognition correlations were computed across all valid participants, and a correlation threshold was selected from a candidate range by cross-validation. Transition entries whose absolute correlation exceeded the selected threshold were retained as the target-specific feature mask. The retained features were then entered into a ridge-dominant elastic net model (Zou \& Hastie, 2005). The model coefficients $\boldsymbol{\beta}$ minimized
+\begin{equation}
+\frac{1}{2n}
+\sum_{i=1}^{n}
+\left(y_i - \mathbf{x}_i^{\top}\boldsymbol{\beta}\right)^2
++
+\lambda
+\left[
+\alpha \left\lVert \boldsymbol{\beta} \right\rVert_1
++
+\frac{1-\alpha}{2}
+\left\lVert \boldsymbol{\beta} \right\rVert_2^2
+\right].
+\end{equation}
+
+The mixing parameter was fixed at $\alpha = 0.01$, making the model ridge-dominant while still allowing weak sparsity. The penalty strength $\lambda$ was selected by inner cross-validation inside each training fold. Model performance was evaluated using 100 repeats of 10-fold cross-validation. The reported cross-validated correlation and coefficient of determination therefore describe how well the regularized model explains cognitive variation conditional on the full-sample feature mask. They should not be interpreted as fully unbiased estimates of external predictive performance.
+
+
+Statistical significance was tested using a label-shuffle null. In each permutation, cognitive scores were shuffled across participants while the outcome-specific feature mask was kept fixed. The regularized model fitting procedure was then repeated on the permuted labels using the same cross-validation structure. This provided an empirical baseline for the apparent accuracy expected from the same fixed explanatory feature set when behavioural labels carried no meaningful relationship to the transition features.
+
+Three nonlinear regressors were compared with the elastic net using the same cross-validation splits and the same feature-screening strategy: support vector regression with a Gaussian kernel (Drucker et al., 1997), random forests (Breiman, 2001), and gradient-boosted regression trees (Friedman, 2001). Standardization, model fitting, and hyperparameter tuning were performed within the training folds. Each nonlinear model was compared with the elastic net using paired differences in cross-validated accuracy across folds and repeats. These paired differences were tested using the sign-flip procedure described in Section 3.2.1, with false-discovery-rate correction across targets. A fully retuned label-shuffle null was also computed for each model.
+
+\subsection{Maximum occupancy principle models of transitions}
+
+The maximum occupancy principle provides a second generative account of transitions. The principle proposes that an agent tends to preserve access to a broad range of future action-state paths, rather than simply maximizing an external reward (Ramírez-Ruiz et al., 2024). In the present thesis, this idea was adapted to the empirical graph of resting-state transitions. The model asks whether the probability of moving from one synchronization state to another can be explained by the future transition options made available by each destination.
+
+The model was defined on the binary support matrix $M_{ij}$ from Section 3.2.5. A transition was allowed only if it appeared in the training data. The value of state $i$, $V_i$, was defined recursively as a soft value over its allowed destinations:
+\begin{equation}
+V_i
+=
+\log
+\sum_{j=1}^{K}
+M_{ij}
+\exp(-\lambda c_j + \gamma V_j).
+\end{equation}
+
+The corresponding predicted transition probabilities were
+\begin{equation}
+\hat{T}_{ij}
+=
+\frac{
+M_{ij}\exp(-\lambda c_j + \gamma V_j)
+}
+{
+\sum_{k=1}^{K}
+M_{ik}\exp(-\lambda c_k + \gamma V_k)
+}.
+\end{equation}
+
+Here, $\gamma=0.99$ is the discount factor and $\lambda\geq 0$ controls the strength of the destination cost. The cost $c_j$ was defined as the within-state dispersion of destination state $j$:
+\begin{equation}
+c_j
+=
+\frac{1}{n_j}
+\sum_{t:q_t=j}
+\left\lVert \mathbf{x}_t-\boldsymbol{\mu}_j \right\rVert,
+\end{equation}
+where $\mathbf{x}_t$ is the 50-dimensional PCA representation of time point $t$, $\boldsymbol{\mu}_j$ is the centroid of state $j$, and $n_j$ is the number of time points assigned to state $j$. Compact states therefore had lower cost, whereas more dispersed states had higher cost. Only destination costs were included, because a source-specific cost would be constant within a row and would cancel during row normalization. Pure topology-only MOP models set $\lambda=0$.
+
+Two model families were tested. The first family modelled the full transition row, including self-transitions. The PureBinaryMOP model used only the transition support and the recursive value term. The DispersionDestinationMOP model added the destination dispersion cost $c_j$.
+
+The second family separated persistence from switch routing. Self-transitions were removed from the MOP policy, so that the model predicted only the distribution over switch destinations. The full transition matrix was then reconstructed in two stages:
+\begin{equation}
+\hat{T}_{ii}=q_i,
+\end{equation}
+\begin{equation}
+\hat{T}_{ij}
+=
+(1-q_i)\pi_{ij},
+\quad j\neq i,
+\end{equation}
+where $\pi_{ij}$ is the MOP switch policy over destinations $j\neq i$. The stay probability $q_i$ was either a single pooled stay probability shared by all states or a state-specific empirical stay probability.
+
+\begin{table}[htbp]
+\centering
+\caption{The MOP model family.}
+\label{tab:mop_model_family}
+\footnotesize
+\renewcommand{\arraystretch}{1.25}
+
+\begin{tabularx}{\textwidth}{@{}
+>{\raggedright\arraybackslash}p{0.36\textwidth}
+>{\raggedright\arraybackslash}p{0.16\textwidth}
+>{\raggedright\arraybackslash}X
+@{}}
+\toprule
+\textbf{Model} & \textbf{Type} & \textbf{Definition} \\
+\midrule
+PureBinaryMOP
+& Full row
+& Recursive value model over the binary support, with no destination cost \\
+
+DispersionDestinationMOP
+& Full row
+& Full-row MOP model with destination dispersion cost \\
+
+OffdiagPureMOP
+& Switch only
+& MOP policy over switch destinations, with self-transitions removed \\
+
+OffdiagDispersionDestinationMOP
+& Switch only
+& Switch-only MOP model with destination dispersion cost \\
+
+GlobalStay
+& Stay gate
+& Diagonal probability set to one pooled stay probability \\
+
+EmpiricalStay
+& Stay gate
+& Diagonal probability set to each state's empirical stay probability \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+The cost weight $\lambda$ was selected from a non-negative grid, while $\gamma$ was fixed at 0.99. All MOP models were evaluated both in the full sample and using leave-one-participant-out cross-validation. In cross-validation, the support matrix, stay probabilities, destination costs, and tuned parameters were estimated from the training participants only and then evaluated on the held-out participant.
+
+Models were scored using negative log-likelihood, predicted-versus-empirical correlations for all entries, diagonal entries, and off-diagonal entries, mean absolute error, root-mean-square error, and the absolute error in transition entropy. Planned comparisons tested whether adding destination dispersion improved prediction over the pure binary MOP model, and whether state-specific persistence improved prediction over the global-stay baseline. These comparisons used the paired sign-flip test, bootstrap confidence intervals, and false-discovery-rate correction described in Section 3.2.1.
+
+
+\chapter{Results and Data Analyses}
+
+The results are presented in the same order as the methods. First, I describe the seven-state synchronization atlas and the participant-level dynamic measures. I then test whether the observed transition sequences contain temporal structure beyond state occupancy and dwell time. Next, I compare generative models of the transition matrix, including geometry, persistence, and maximum occupancy principle models. Finally, I examine whether transition dynamics relate to cognitive performance.
+
+All analyses used the inferential framework described in Section 3.2.1, with participants as the unit of inference. The final sample included $N=182$ participants. Figures are reported in Appendix A and are cited in the text by appendix number. Tables are included in the main text.
+
+\section{State atlas and dynamic measures}
+
+The seven-state atlas provided a compact working description of the resting-state synchronization dynamics. State occupancies were broadly balanced, ranging from 12.0\% to 19.2\% of volumes, and all states showed strong self-persistence, with self-transition probabilities between 0.798 and 0.852. Mean dwell times ranged from 4.9 to 6.7 volumes. State 7 was the most frequently occupied state and also had the highest mean local synchronization at the centroid (Table~\ref{tab:seven_state_atlas_summary}; Appendix Figure A.1).
+
+Across participants, the main dynamic measures were stable in scale. Occupancy entropy was $H_1 = 2.58 \pm 0.17$, transition entropy was $H_2 = 1.03 \pm 0.11$, switch rate was $0.177 \pm 0.023$, and global synchrony was $0.581 \pm 0.097$. Since the maximum possible entropy for seven states is $\log_2 7 \approx 2.81$, occupancy was relatively distributed across states, whereas transition entropy was much lower, reflecting strong persistence and constrained transition structure.
+
+\begin{table}[htbp]
+\centering
+\caption{Seven-state atlas summary.}
+\label{tab:seven_state_atlas_summary}
+\begin{tabular}{@{}c c c c c@{}}
+\toprule
+\textbf{State} & \textbf{Occupancy} & \textbf{Self-transition probability} & \textbf{Mean dwell time, volumes} & \textbf{Centroid $R$} \\
+\midrule
+1 & 0.120 & 0.802 & 5.0 & 0.64 \\
+2 & 0.134 & 0.832 & 5.9 & 0.71 \\
+3 & 0.134 & 0.798 & 4.9 & 0.65 \\
+4 & 0.137 & 0.813 & 5.3 & 0.68 \\
+5 & 0.134 & 0.812 & 5.3 & 0.66 \\
+6 & 0.149 & 0.852 & 6.7 & 0.73 \\
+7 & 0.192 & 0.840 & 6.2 & 0.78 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The seven-state solution should be interpreted as a working partition of a continuous synchronization space, not as evidence for seven sharply separated clusters. Average silhouette width was low across clustering solutions and was highest at $K=2$, with a value of 0.107 compared with 0.025 at $K=7$. However, the seven-state solution was reasonably reproducible. Repeated re-clustering of resampled time points produced a mean adjusted Rand index of 0.82, while re-deriving the atlas from independent participant halves gave a lower but still meaningful mean adjusted Rand index of 0.64. The adjusted Rand index quantifies agreement between cluster solutions while correcting for chance agreement (Hubert \& Arabie, 1985).
+
+The control analysis confirmed the importance of removing the global synchronization level before clustering. Without this correction, the resulting atlas differed strongly from the primary atlas. The global level explained 88\% of the variance in the uncorrected state labels, but only 25\% of the variance in the primary state labels. Thus, the primary atlas mainly captured spatial configuration of local synchronization rather than overall synchronization amplitude.
+
+\section{Distributional validation of the atlas}
+
+The Gaussian mixture analysis showed that the state-space density was complex and non-elliptical, but it did not identify seven components as an optimal density description. A single Gaussian was clearly inadequate. A seven-component mixture improved out-of-sample density over the heavy-tailed Student-$t$ baseline for every participant, with a mean per-participant log-likelihood gain of 0.88. However, the model-complexity criteria did not converge on seven components.
+
+The penalized in-sample criterion was minimized at nine components, whereas participant-blocked out-of-sample likelihood continued to improve up to the largest model tested, with an optimum at 50 components. The one-standard-error rule selected 15 components as the most parsimonious near-optimal solution. The correspondence between Gaussian mixture components and the seven k-means states was weak, with an adjusted Rand index of 0.06 for the seven-component mixture model. The seven-state atlas was therefore retained as a pre-specified working atlas for the transition models, not as a recovered optimum of the pooled density.
+
+\section{Structure of the transition sequences}
+
+The surrogate-null analysis showed that the observed state sequences were much more temporally structured than expected from state occupancy alone. Observed transition entropy was far lower than under the occupancy-preserving null: $H_2 = 0.94$ for the observed sequences versus 2.51 for the surrogate sequences. The mean observed-minus-surrogate difference was $-1.56$, with a 95\% confidence interval of $[-1.59, -1.54]$. All 182 participants had transition entropy below their own surrogate mean, and the group-level two-sided $p$-value was $4 \times 10^{-4}$ after the planned correction.
+
+The same conclusion held after removing self-transitions. The off-diagonal transition entropy was also lower than expected under the occupancy-preserving null, with a mean difference of $-0.56$. This shows that the structure was not limited to persistence in the same state, but also affected the choice of destination after a switch.
+
+The stricter dwell-preserving null produced a smaller but still reliable effect. When the order of dwell segments was shuffled while preserving their lengths, observed transition entropy remained below the surrogate distribution, with a mean difference of $-0.060$. In this test, 178 of 182 participants fell below their surrogate mean after false-discovery correction, and the group-level $p$-value was again $4 \times 10^{-4}$. These results show that the observed sequences contain sequential structure beyond both state occupancy and dwell-time distribution. This is consistent with previous work showing that resting brain-state sequences are temporally organized rather than random (Vidaurre et al., 2017).
+
+The dwell-bias analysis showed that persistence was strongly state-specific. Replacing a single pooled stay probability with state-specific stay probabilities improved held-out prediction. The empirical-stay model reduced negative log-likelihood relative to the global-stay model by 0.0057, with $q = 2 \times 10^{-4}$. It also recovered the diagonal structure much better, increasing the held-out diagonal correlation from 0.02 to 0.48. Because both models routed switches uniformly across supported destinations, this improvement reflects better modelling of persistence rather than better modelling of switch destination.
+
+\section{Generative models of the transitions}
+
+\textbf{Graded-geometry model (Methods 3.2.4).}
+The single-length-scale distance law captured the off-diagonal transition structure well. At the fitted length scale, $\tau = 7.08$, the predicted and empirical group transition matrices correlated strongly across all entries ($r = 0.97$) and across off-diagonal entries only ($r = 0.90$). This off-diagonal fit exceeded every exact relabelling of the seven state centroids, giving the smallest attainable $p$-value under the $7! = 5{,}040$ state-label permutation null ($p = 1/5040 \approx 2 \times 10^{-4}$; Nichols \& Holmes, 2002).
+
+Under conditional leave-one-participant-out cross-validation, the off-diagonal fit remained substantial ($r = 0.54$; all entries: $r = 0.96$; diagonal: $r = 0.06$). Because the sample included genetically related participants, these held-out correlations are reported descriptively unless family-clustered resampling is used (Winkler et al., 2014). The exact state-label null is therefore treated as the confirmatory test.
+
+The model predicted switch routing, but not persistence: the full-sample diagonal fit was weak ($r = -0.10$), consistent with the absence of a separate stay-probability term. Persistence was instead captured by the dwell-bias analysis (Methods 3.2.5). The off-diagonal cross-validated fit was stable after quality-control and statistical-extreme exclusions ($r = 0.54$ to $0.56$).
+
+Exploratory partial correlations between held-out model fit and cognition, controlling for age and sex, were weak. The largest effects were for word reading ($r = 0.17$) and working memory, measured by List Sorting ($r = 0.15$), but none survived false-discovery-rate correction (Benjamini \& Hochberg, 1995; Appendix Figure A.9).
+\vspace{1em}
+\par\noindent\textbf{Maximum occupancy principle (Methods 3.2.7).}
+The maximum occupancy principle models showed a different pattern. Adding the destination dispersion cost to the binary-action MOP improved held-out prediction over the pure topology model, but this improvement was concentrated on the diagonal. Overall negative log-likelihood decreased by 0.020, with $q < 10^{-3}$, and diagonal negative log-likelihood decreased by 0.026, with $q < 10^{-3}$. The diagonal correlation increased from 0.74 to 0.79. In contrast, off-diagonal fit did not improve; the change in off-diagonal correlation was $-0.009$, with $q \approx 1$.
+
+The stay-switch decomposition confirmed this pattern. State-specific persistence improved prediction, but adding the destination dispersion cost to the switch policy did not improve conditional switch routing, with $q$-values between 0.15 and 0.29. Thus, in these data, the MOP-style dispersion cost mainly improved the modelling of persistence, not the routing of switches. Off-diagonal routing was better captured by geometric distance between state centroids than by destination dispersion cost (Table~\ref{tab:added_model_terms}; Appendix Figure A.12). The MOP interpretation follows the maximum occupancy principle proposed by Ramírez-Ruiz et al. (2024), but here it is tested only as a transition-model hypothesis.
+
+\begin{table}[htbp]
+\centering
+\caption{Effects of added model terms on held-out prediction.}
+\label{tab:added_model_terms}
+\footnotesize
+\renewcommand{\arraystretch}{1.2}
+\begin{tabularx}{\textwidth}{@{}
+>{\raggedright\arraybackslash}p{0.28\textwidth}
+>{\raggedright\arraybackslash}X
+>{\raggedright\arraybackslash}X
+@{}}
+\toprule
+\textbf{Added term or model} & \textbf{Diagonal / persistence} & \textbf{Off-diagonal / routing} \\
+\midrule
+State-specific stay versus global stay
+& Improved diagonal fit, $r: 0.02 \rightarrow 0.48$, $q < 10^{-3}$
+& Does not model conditional routing; any off-diagonal change reflects stay-switch scaling \\
+
+Dispersion cost versus binary topology
+& Improved diagonal fit, $\Delta \mathrm{NLL} = 0.026$, $r: 0.74 \rightarrow 0.79$, $q < 10^{-3}$
+& No improvement, $\Delta r = -0.009$, $q \approx 1$ \\
+
+Dispersion cost on switch policy
+& Not applicable
+& No improvement, $q = 0.15$ to $0.29$ \\
+
+Graded geometry distance law
+& Diagonal mainly explained by dwell structure
+& Strong routing prediction, LOOCV off-diagonal $r = 0.54$ \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+The overall pattern is clear: persistence terms explain the diagonal, while the graded-geometry model explains the routing of switches between states.
+
+\section{Transitions and cognition}
+
+Transition entropy showed the clearest univariate association with cognition. The strongest individual association was between off-diagonal transition entropy and working memory, measured by List Sorting, with $r = 0.213$ and a permutation $p = 0.0037$ based on 100,000 label shuffles. The direction of the effect was consistently positive across the four entropy measures and across the cognitive battery. For example, off-diagonal transition entropy was positively associated with fluid reasoning, measured by Penn Matrix Reasoning ($r = 0.170$), and with the general cognitive factor ($r = 0.154$).
+
+These effects were modest. Under false-discovery-rate correction across all 28 entropy-outcome combinations, no single association survived correction, with the smallest corrected value $q = 0.10$. However, the effects were directionally consistent across closely related measures of transition diversity. For this reason, the pattern is interpreted as weak evidence that participants with more diverse transition dynamics tend to show better cognitive performance, especially in working memory. This interpretation remains cautious, because brain-behaviour associations in neuroimaging are often small and sensitive to validation choices (Marek et al., 2022; Appendix Figure A.15).
+
+The multivariate explanatory analysis tested whether the full transition matrix contained cognitive information beyond single entropy summaries. A ridge-dominant elastic net model using the 49 transition probabilities showed above-null cross-validated explanatory accuracy for two targets after false-discovery correction: working memory, measured by List Sorting ($r = 0.257$, $q = 0.040$), and cognitive flexibility, measured by Dimensional Change Card Sort ($r = 0.177$, $q = 0.040$). The general cognitive factor and inhibitory control showed weaker evidence after correction, with $r = 0.180$ and $r = 0.090$, respectively, both with $q = 0.073$. Fluid reasoning did not reach corrected significance ($r = 0.113$, $q = 0.111$). This analysis follows the general logic of connectome-based predictive modelling, where brain features are related to individual behavioural differences under cross-validation (Shen et al., 2017). In the present thesis, however, the results are interpreted as explanatory associations conditional on the full-sample feature mask, not as unbiased estimates of external predictive performance.
+
+\begin{table}[htbp]
+\centering
+\caption{Cross-validated explanatory mapping of cognition from transition probabilities.}
+\label{tab:cognition_explanatory_mapping}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.05}
+\begin{tabular}{@{}l c c c c@{}}
+\toprule
+\textbf{Cognitive target} & \textbf{CV corr.} & \textbf{$R^2$} & \textbf{Perm. $p$} & \textbf{FDR $q$} \\
+\midrule
+List Sorting, working memory & 0.257 & 0.065 & 0.002 & 0.040 \\
+Card Sort, cognitive flexibility & 0.177 & 0.030 & 0.004 & 0.040 \\
+General factor, $g$ & 0.180 & 0.030 & 0.020 & 0.073 \\
+Flanker, inhibitory control & 0.090 & 0.003 & 0.018 & 0.073 \\
+Penn Matrix Reasoning, fluid reasoning & 0.113 & 0.010 & 0.046 & 0.111 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The nonlinear models did not improve the transition-cognition mapping relative to the ridge-dominant elastic net. Support vector regression with a Gaussian kernel, random forests, and gradient-boosted regression trees were tested using the same repeated cross-validation framework and compared with the elastic net using a corrected paired testing approach for repeated cross-validation (Nadeau \& Bengio, 2003). For the targets with the clearest signal, including working memory, cognitive flexibility, and the general factor, nonlinear models performed worse than the elastic net, with paired changes in correlation ranging from approximately $-0.06$ to $-0.22$. Nonlinear models exceeded the elastic net only for the weakest targets, where absolute accuracy remained low ($r \leq 0.16$). Thus, the transition-cognition signal appears small and largely linear.
+
+Two caveats are important. First, the feature mask was estimated on the full sample to support feature-level inference. Therefore, the reported cross-validated accuracies should be read as explanatory metrics conditional on that mask, not as leakage-free estimates of prediction accuracy on new participants. Their main value is in comparison with the label-shuffle nulls and paired model comparisons. Second, cross-validation folds were subject-wise rather than family-wise because HCP family identifiers were not available for this subset. This may leave residual genetic dependence between training and test folds. The practical conclusion is therefore inferential: transition probabilities contain a small but reliable explanatory signal for working memory and executive function, but stricter fully nested and family-aware validation would be needed before treating these features as predictive biomarkers.
+
+% \section{Transitions and cognition}
+
+% Transition entropy showed the clearest association with cognition. The strongest individual association was between off-diagonal transition entropy and working memory, measured by List Sorting, with $r = 0.213$ and a permutation $p$-value of 0.0037 based on 100,000 label shuffles. The direction of association was consistently positive across the four entropy measures and across the cognitive battery. For example, off-diagonal entropy correlated positively with fluid reasoning, measured by Penn Matrix Reasoning, $r = 0.170$, and with the general cognitive factor, $r = 0.154$.
+
+% These effects were small. Under a strict false-discovery correction across all 28 entropy-outcome combinations, no individual association reached significance, with the smallest $q = 0.10$. However, the pattern was directionally consistent across related entropy measures. Because these measures are alternative summaries of transition diversity rather than independent biological hypotheses, the consistency of the direction is informative, even though the individual corrected effects remain modest. The results therefore suggest a weak positive relationship between transition diversity and cognitive performance, strongest for working memory (Appendix Figure A.15). This cautious interpretation is important because brain-behaviour associations in neuroimaging are often small and sensitive to validation choices (Marek et al., 2022).
+
+% The predictive modelling analysis tested whether the transition matrix contained multivariate information about cognition. A ridge-dominant elastic net model using the 49 transition probabilities reached cross-validated accuracy that survived false-discovery correction for two targets: working memory, measured by List Sorting, $r = 0.257$, $q = 0.040$, and cognitive flexibility, measured by Card Sort, $r = 0.177$, $q = 0.040$. The general cognitive factor and inhibitory control were marginal after correction, with $r = 0.180$ and $r = 0.090$, respectively, both with $q = 0.073$. Fluid reasoning did not reach corrected significance, $r = 0.113$, $q = 0.111$. This modelling approach follows the logic of connectome-based predictive modelling, where cross-validated brain features are used to predict individual differences in behaviour (Shen et al., 2017).
+
+% \begin{table}[htbp]
+% \centering
+% \caption{Cross-validated prediction of cognition from transition probabilities.}
+% \label{tab:cognition_prediction_results}
+% \begin{tabular}{@{}l c c c c@{}}
+% \toprule
+% \textbf{Cognitive target} & \textbf{CV correlation} & \textbf{$R^2$} & \textbf{Permutation $p$} & \textbf{FDR $q$} \\
+% \midrule
+% List Sorting, working memory & 0.257 & 0.065 & 0.002 & 0.040 \\
+% Card Sort, cognitive flexibility & 0.177 & 0.030 & 0.004 & 0.040 \\
+% General factor, $g$ & 0.180 & 0.030 & 0.020 & 0.073 \\
+% Flanker, inhibitory control & 0.090 & 0.003 & 0.018 & 0.073 \\
+% Penn Matrix Reasoning, fluid reasoning & 0.113 & 0.010 & 0.046 & 0.111 \\
+% \bottomrule
+% \end{tabular}
+% \end{table}
+
+% The nonlinear model comparison did not show a general advantage for nonlinear prediction. Support vector regression with a Gaussian kernel, random forests, and gradient-boosted regression trees were tested using the same repeated cross-validation framework and compared with the elastic net using a corrected paired testing approach for repeated cross-validation (Nadeau \& Bengio, 2003). For the targets with the clearest signal, including working memory, cognitive flexibility, and the general factor, the nonlinear models performed worse than the elastic net, with paired changes in correlation ranging from approximately $-0.06$ to $-0.22$. Nonlinear models exceeded the elastic net only for the weakest targets, where the absolute accuracies remained low, $r \leq 0.16$. Thus, the predictive signal in the transition matrix appears to be small and mostly linear.
+
+% Two caveats apply to these modelling results. First, because feature selection was performed on the full sample to maximize inferential power, the reported cross-validated accuracies represent explanatory in-sample associations rather than strict out-of-sample predictive generalization. The absolute accuracies should therefore be interpreted relative to the label-shuffle nulls and model comparisons, rather than as unbiased estimates of performance on unseen data. Second, cross-validation folds were subject-wise rather than family-wise because HCP family identifiers were not available for this specific subset. This may leave some latent genetic dependence between training and test folds. The practical conclusion is therefore focused on inference. While transition probabilities carry a reliable explanatory signal for working memory and executive function, further strict out-of-sample testing is required to establish them as predictive biomarkers.
+
+\section{Sensitivity analyses}
+
+Sensitivity analyses were used to assess whether the main results depended on statistical extremes or covariate adjustment. Because motion and nuisance records were not available alongside the parcel time series, no participant was excluded on acquisition-quality grounds. The quality-control sample was therefore identical to the full sample, and the sensitivity analyses focused on the removal of outcome-derived statistical extremes.
+
+The mechanistic findings were stable across these exclusions. The graded-geometry model showed nearly unchanged or slightly stronger off-diagonal generalization, with LOOCV correlations of $r = 0.54$ in the full sample, $r = 0.55$ after excluding severe extremes, and $r = 0.56$ after excluding all flagged extremes. The empirical-stay model also retained its advantage over the global-stay null across the same samples, confirming that the state-specific persistence effect was not driven by a small number of extreme participants.
+
+The entropy-cognition associations were more sensitive, as expected for modest individual-difference effects. However, partial correlations controlling for global synchrony, metastability, switch rate, and occupancy left the main pattern largely unchanged. This suggests that the association between transition entropy and cognition was not simply a by-product of overall synchronization level, metastability, switching frequency, or state occupancy. Finally, removing the designated single-case participant did not alter any main conclusion.
+
+\chapter{Statement of Contribution}
+\addcontentsline{toc}{section}{Statement of Contribution}
+
+In accordance with the requirements for the Master's Thesis in Computational Neuroscience at Universitat Pompeu Fabra, this statement details the specific contributions made to the research presented in this document. The broad conceptual goals regarding brain turbulence and vortex spaces were formulated by Gustavo Deco, while the overarching objectives to evaluate resting-state transition patterns and test the maximum occupancy principle (MOP) as a generative transition hypothesis were collaboratively evolved by Gustavo Deco, Mohaddeseh Hosseinzadeh, and Ruben Moreno Bote. Methodologically, Gustavo Deco provided the foundational definition of local Kuramoto synchronization and the recommendation for a k-means clustering framework, and Ruben Moreno Bote originally conceptualized and formulated the core maximum occupancy principle. Mohaddeseh Hosseinzadeh independently designed and developed all other methodologies, including introducing the 50-dimensional principal component analysis (PCA) dimensionality reduction step, inventing the novel exponential graded-geometry distance model, designing the occupancy- and dwell-preserving surrogate null testing frameworks, and formulating the specific destination dispersion cost variant used to expand the MOP policy. Using raw data acquired by the Human Connectome Project consortium, Mohaddeseh Hosseinzadeh independently developed and implemented the entire computational pipeline in MATLAB. This included coding the PCA and clustering execution, the graded-geometry optimization loops, the surrogate-shuffling frameworks, and the custom recursive policy functions required to computationally implement the MOP equations alongside the destination dispersion cost function. For the multivariate predictive analyses, Mohaddeseh Hosseinzadeh utilized regularized ridge dominant elastic net regression provided by Gustavo Deco, adapting it to interface with the empirical transition matrices. Mohaddeseh Hosseinzadeh independently implemented the nonlinear machine-learning analysis pipelines, including support-vector regression, random forests, and gradient-boosted trees. She drafted the thesis and revised it in response to supervisory feedback. Gustavo Deco and Ruben Moreno Bote supervised the research, contributed to the interpretation of the findings, and reviewed the manuscript. All named contributors reviewed and approved the final version
+
+\end{document}
