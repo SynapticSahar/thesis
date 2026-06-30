@@ -847,6 +847,19 @@ but modest. The strongest conclusion is therefore mechanistic rather than predic
 dynamics provide a useful way to characterize the temporal organization of resting-state brain
 activity.
 
+\chapter{Discussion}
+This thesis examined whether resting-state synchronization dynamics can be described as a
+sequence of recurring local-synchrony states, whether transitions between those states are
+structured, and whether transition features relate to cognition. Three main findings emerged.
+First, the seven-state atlas provided a reproducible working partition of the data, but the
+state-space validation did not support seven sharply separated density components. The atlas
+should therefore be interpreted as a useful modelling scaffold rather than as evidence for seven
+discrete attractor states. Second, transition sequences were much more structured than expected
+from occupancy-preserving and dwell-preserving surrogate sequences. This shows that the
+ordering of states contains temporal information beyond how often states occur and how long
+they persist. Third, the generative models separated two parts of the transition matrix: geometric
+distance between state centroids explained switch routing, whereas state-specific persistence
+explained the diagonal.
 
 \chapter{Statement of Contribution}
 In accordance with the requirements for the Master's Thesis in Computational Neuroscience at Universitat Pompeu Fabra, this statement details the specific contributions made to the research presented in this document. The broad conceptual goals regarding brain turbulence and vortex spaces were formulated by Gustavo Deco, while the overarching objectives to evaluate resting-state transition patterns and test the maximum occupancy principle (MOP) as a generative transition hypothesis were collaboratively evolved by Gustavo Deco, Mohaddeseh Hosseinzadeh, and Ruben Moreno Bote. Methodologically, Gustavo Deco provided the foundational definition of local Kuramoto synchronization and the recommendation for a k-means clustering framework, and Ruben Moreno Bote originally conceptualized and formulated the core maximum occupancy principle. Mohaddeseh Hosseinzadeh independently designed and developed all other methodologies, including introducing the 50-dimensional principal component analysis (PCA) dimensionality reduction step, inventing the novel exponential graded-geometry distance model, designing the occupancy- and dwell-preserving surrogate null testing frameworks, and formulating the specific destination dispersion cost variant used to expand the MOP policy. Using raw data acquired by the Human Connectome Project consortium, Mohaddeseh Hosseinzadeh independently developed and implemented the entire computational pipeline in MATLAB. This included coding the PCA and clustering execution, the graded-geometry optimization loops, the surrogate-shuffling frameworks, and the custom recursive policy functions required to computationally implement the MOP equations alongside the destination dispersion cost function. For the multivariate predictive analyses, Mohaddeseh Hosseinzadeh utilized regularized ridge dominant elastic net regression provided by Gustavo Deco, adapting it to interface with the empirical transition matrices. Mohaddeseh Hosseinzadeh independently implemented the nonlinear machine-learning analysis pipelines, including support-vector regression, random forests, and gradient-boosted trees. She drafted the thesis and revised it in response to supervisory feedback. Gustavo Deco and Ruben Moreno Bote supervised the research, contributed to the interpretation of the findings, and reviewed the manuscript. All named contributors reviewed and approved the final version
