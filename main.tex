@@ -34,6 +34,12 @@
 \setlength{\parskip}{0pt}
 \raggedbottom
 
+\newcommand{\compacttablestyle}{%
+  \captionsetup{font=footnotesize,skip=2pt}%
+  \small
+  \setlength{\tabcolsep}{3pt}%
+  \renewcommand{\arraystretch}{0.85}%
+}
 
 
 \begin{document}
@@ -190,12 +196,9 @@ The criteria did not converge on seven components (Table~\ref{tab:gmm_density_co
 
 \begin{table}[H]
 \centering
-\captionsetup{font=footnotesize,skip=2pt}
+\compacttablestyle
 \caption{Density-complexity criteria for the Gaussian mixture analysis. All criteria favoured more than seven components. This supports a complex, non-elliptical density rather than a recovered seven-state density optimum.}
 \label{tab:gmm_density_complexity}
-\small
-\setlength{\tabcolsep}{3pt}
-\renewcommand{\arraystretch}{0.85}
 \begin{tabular}{p{0.38\textwidth} p{0.18\textwidth} p{0.34\textwidth}}
 \toprule
 \textbf{Selection criterion} & \textbf{Components} & \textbf{Interpretation} \\
@@ -270,10 +273,9 @@ T_2
 % \end{table}
 \begin{table}[htbp]
 \centering
+\compacttablestyle
 \caption{Subject-level dynamic measures. All entropy measures used base-2 logarithms (Shannon, 1948).}
 \label{tab:subject_dynamic_measures}
-\small
-\renewcommand{\arraystretch}{1.05}
 \begin{tabular}{p{0.30\textwidth} p{0.17\textwidth} p{0.42\textwidth}}
 \toprule
 \textbf{Measure} & \textbf{Symbol} & \textbf{Meaning} \\
@@ -548,10 +550,10 @@ where $\pi_{ij}$ is the MOP switch policy over destinations $j\neq i$. The stay 
 
 \begin{table}[htbp]
 \centering
+\compacttablestyle
 \caption{The MOP model family.}
 \label{tab:mop_model_family}
 \footnotesize
-\renewcommand{\arraystretch}{1.25}
 
 \begin{tabularx}{\textwidth}{@{}
 >{\raggedright\arraybackslash}p{0.36\textwidth}
@@ -607,6 +609,7 @@ Across participants, the main dynamic measures were stable in scale. Occupancy e
 
 \begin{table}[htbp]
 \centering
+\compacttablestyle
 \caption{Seven-state atlas summary.}
 \label{tab:seven_state_atlas_summary}
 \begin{tabular}{@{}c c c c c@{}}
@@ -662,10 +665,10 @@ The stay-switch decomposition confirmed this pattern. State-specific persistence
 
 \begin{table}[htbp]
 \centering
+\compacttablestyle
 \caption{Effects of added model terms on held-out prediction.}
 \label{tab:added_model_terms}
 \footnotesize
-\renewcommand{\arraystretch}{1.2}
 \begin{tabularx}{\textwidth}{@{}
 >{\raggedright\arraybackslash}p{0.28\textwidth}
 >{\raggedright\arraybackslash}X
@@ -705,11 +708,10 @@ The multivariate explanatory analysis tested whether the full transition matrix 
 
 \begin{table}[htbp]
 \centering
+\compacttablestyle
 \caption{Cross-validated explanatory mapping of cognition from transition probabilities.}
 \label{tab:cognition_explanatory_mapping}
 \footnotesize
-\setlength{\tabcolsep}{4pt}
-\renewcommand{\arraystretch}{1.05}
 \begin{tabular}{@{}l c c c c@{}}
 \toprule
 \textbf{Cognitive target} & \textbf{CV corr.} & \textbf{$R^2$} & \textbf{Perm. $p$} & \textbf{FDR $q$} \\
