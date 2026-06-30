@@ -21,6 +21,7 @@
 \usepackage{tabularx}
 \usepackage{array}
 \usepackage{caption}
+\usepackage{placeins}
 \usepackage[hidelinks]{hyperref}
 \usepackage{chngcntr}
 \counterwithout{equation}{chapter}
@@ -202,18 +203,19 @@ Pre-specified k-means atlas & 7 & Working partition used by the generative model
 \end{tabular}
 \end{table}
 
+\FloatBarrier
 \subsection{Subject-level dynamic measures}
 
 Each participant's state sequence $q_1,\ldots,q_L$ was summarized using the measures listed in Table~\ref{tab:subject_dynamic_measures}. State occupancy was defined as the fraction of volumes assigned to each state. Switch rate was defined as the fraction of consecutive volumes in which the assigned state changed. Transitions between consecutive states were counted in a $K \times K$ matrix $C$, where $C_{ij}$ is the number of observed transitions from state $i$ to state $j$. The transition count matrix was row-normalized to obtain the transition probability matrix:
-\[
+\begin{equation}
 P_{ij}
 =
 \frac{C_{ij}}{\sum_{k=1}^{K}C_{ik}}.
-\]
+\end{equation}
 The entries of $P$ are the transition probabilities used by the models in Section 2.2.
 
 Two information-theoretic measures were computed using Shannon entropy (Shannon, 1948). Occupancy entropy, $H_1$, was defined as the entropy of the participant's state occupancy distribution. Transition entropy, $H_2$, was defined as the occupancy-weighted mean of the row entropies of the transition matrix:
-\[
+\begin{equation}
 H_2
 =
 \sum_{i=1}^{K}
@@ -223,24 +225,24 @@ w_i
 \sum_{j=1}^{K}
 P_{ij}\log_2 P_{ij}
 \right),
-\]
+\end{equation}
 where $w_i$ is the relative frequency with which state $i$ served as the origin of a transition. $H_2$ was also computed after removing self-transitions. This switch-conditional version separated the diversity of switch destinations from simple persistence in the same state.
 
 Finally, spatial and temporal heterogeneity of local synchronization were summarized from $R(c,t)$. Spatial heterogeneity, $T_1$, was defined as the time-averaged dispersion of local synchronization across parcels. Temporal heterogeneity, $T_2$, was defined as the parcel-averaged dispersion of local synchronization across time:
-\[
+\begin{equation}
 T_1
 =
 \frac{1}{L}
 \sum_{t=1}^{L}
 \operatorname{std}_c R(c,t),
-\]
-\[
+\end{equation}
+\begin{equation}
 T_2
 =
 \frac{1}{N}
 \sum_{c=1}^{N}
 \operatorname{std}_t R(c,t).
-\]
+\end{equation}
 
 % \begin{table}[htbp]
 % \centering
@@ -319,13 +321,13 @@ probabilities. These correlations were reported for all matrix entries, for the 
 corresponding to self-transitions, and for the off-diagonal entries corresponding to switches
 between states. Mean absolute error and root-mean-square error were also reported. For a
 participant with state sequence \(q_1,\ldots,q_L\), the negative log-likelihood was defined as
-\[
+\begin{equation}
 \mathrm{NLL}
 =
 -\frac{1}{L-1}
 \sum_{t=1}^{L-1}
 \log \hat{P}_{q_t,q_{t+1}},
-\]
+\end{equation}
 where \(\hat{P}_{q_t,q_{t+1}}\) is the model-predicted probability of the observed transition
 from state \(q_t\) to state \(q_{t+1}\). Lower NLL values indicate better model fit.
 
