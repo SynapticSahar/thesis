@@ -21,6 +21,7 @@
 \usepackage{tabularx}
 \usepackage{array}
 \usepackage{caption}
+\usepackage{float}
 \usepackage{placeins}
 \usepackage[hidelinks]{hyperref}
 \usepackage{chngcntr}
@@ -187,10 +188,14 @@ Model complexity was evaluated using both penalized in-sample fit and out-of-sam
 
 The criteria did not converge on seven components (Table~\ref{tab:gmm_density_complexity}). The Bayesian information criterion was minimized at nine components, whereas out-of-sample likelihood continued to improve up to the largest models tested. The one-standard-error rule indicated fifteen components as the most parsimonious near-optimal choice. A single Gaussian was clearly inadequate, but the correspondence between the Gaussian mixture components and the seven-state atlas was weak. For the seven-component mixture model, the adjusted Rand index against the seven k-means states was 0.06, and correspondence did not strengthen at higher component counts. These results indicate that the state-space density is complex and non-elliptical, but they do not identify a single optimal number of discrete states. The seven-state atlas is therefore retained as a pre-specified working description, not as a density-derived optimum.
 
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
+\captionsetup{font=footnotesize,skip=2pt}
 \caption{Density-complexity criteria for the Gaussian mixture analysis. All criteria favoured more than seven components. This supports a complex, non-elliptical density rather than a recovered seven-state density optimum.}
 \label{tab:gmm_density_complexity}
+\small
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{0.85}
 \begin{tabular}{p{0.38\textwidth} p{0.18\textwidth} p{0.34\textwidth}}
 \toprule
 \textbf{Selection criterion} & \textbf{Components} & \textbf{Interpretation} \\
