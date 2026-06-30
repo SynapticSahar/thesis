@@ -231,7 +231,7 @@ P_{ij}
 \end{equation}
 The entries of $P$ are the transition probabilities used by the models in Section 2.2.
 
-Two information-theoretic measures were computed using Shannon entropy (Shannon, 1948). Occupancy entropy, $H_1$, was defined as the entropy of the participant's state occupancy distribution. Transition entropy, $H_2$, was defined as the occupancy-weighted mean of the row entropies of the transition matrix:
+Four normalized entropy measures were computed using Shannon entropy (Shannon, 1948). Occupancy entropy, $H_1$, was defined as the entropy of the participant's state occupancy distribution. Transition entropy, $H_2$, was defined as the occupancy-weighted mean of the row entropies of the transition matrix:
 \begin{equation}
 H_2
 =
@@ -243,7 +243,7 @@ w_i
 P_{ij}\log_2 P_{ij}
 \right),
 \end{equation}
-where $w_i$ is the relative frequency with which state $i$ served as the origin of a transition. $H_2$ was also computed after removing self-transitions. This switch-conditional version separated the diversity of switch destinations from simple persistence in the same state.
+where $w_i$ is the relative frequency with which state $i$ served as the origin of a transition. $H_2$ was also recomputed after removing self-transitions. Two off-diagonal versions were used. The first, $H_{2,\mathrm{off}}$, used the same origin weights $w_i$ as the full transition entropy but computed row entropy after setting self-transitions to zero and renormalizing each row. The second, $H_{2,\mathrm{switch}}$, used origin weights based only on outgoing switches. This switch-weighted version quantified the diversity of destinations conditional on a switch having occurred. Together with $H_1$ and $H_2$, these gave the four normalized entropy measures used in the entropy-cognition analysis.
 
 Finally, spatial and temporal heterogeneity of local synchronization were summarized from $R(c,t)$. Spatial heterogeneity, $T_1$, was defined as the time-averaged dispersion of local synchronization across parcels. Temporal heterogeneity, $T_2$, was defined as the parcel-averaged dispersion of local synchronization across time:
 \begin{equation}
@@ -274,7 +274,8 @@ T_2
 % Switch rate & $\sigma$ & Fraction of consecutive volumes that change state \\
 % Occupancy entropy & $H_1$ & Entropy of the state occupancy distribution \\
 % Transition entropy & $H_2$ & Origin-weighted mean transition-row entropy \\
-% Switch-conditional entropy & $H_{2,\mathrm{off}}$ & Transition entropy after excluding self-transitions \\
+% Off-diagonal transition entropy & $H_{2,\mathrm{off}}$ & Transition entropy after excluding self-transitions, using original origin weights \\
+% Switch-weighted transition entropy & $H_{2,\mathrm{switch}}$ & Transition entropy after excluding self-transitions, using switch-origin weights \\
 % Synchronization heterogeneity & $T_1, T_2$ & Spatial and temporal dispersion of local synchronization \\
 % Global synchrony and metastability & $S, M$ & Temporal mean and temporal standard deviation of the global order parameter \\
 % \bottomrule
@@ -294,13 +295,14 @@ Transition probability & $P_{ij}$ & Probability of moving from state $i$ to stat
 Switch rate & $\sigma$ & Fraction of consecutive volumes that change state \\
 Occupancy entropy & $H_1$ & Entropy of the state occupancy distribution \\
 Transition entropy & $H_2$ & Origin-weighted mean transition-row entropy \\
-Switch-conditional entropy & $H_{2,\mathrm{off}}$ & Transition entropy after excluding self-transitions \\
+Off-diagonal transition entropy & $H_{2,\mathrm{off}}$ & Transition entropy after excluding self-transitions, using original origin weights \\
+Switch-weighted transition entropy & $H_{2,\mathrm{switch}}$ & Transition entropy after excluding self-transitions, using switch-origin weights \\
 Synchronization heterogeneity & $T_1, T_2$ & Spatial and temporal dispersion of local synchronization \\
 Global synchrony and metastability & $S, M$ & Temporal mean and temporal standard deviation of the global order parameter \\
 \bottomrule
 \end{tabular}
 \end{table}
-Two measures require careful interpretation. $T_1$ and $T_2$ describe spatial and temporal variability in local synchronization. In the recent brain-turbulence framework, fluctuations in local synchronization are used to define a vortex-space description of whole-brain dynamics (Deco et al., 2026; Deco et al., 2025). In the present thesis, however, these measures should be understood as local-synchronization heterogeneity measures, because no explicit detection of topological phase singularities or vortex cores was performed. Transition entropy $H_2$ was almost perfectly correlated with switch rate across participants ($r = 0.99$). It is therefore treated as a persistence-sensitive measure. The switch-conditional version, $H_{2,\mathrm{off}}$, is used when the target quantity is the diversity of destinations after a switch has occurred.
+Two measures require careful interpretation. $T_1$ and $T_2$ describe spatial and temporal variability in local synchronization. In the recent brain-turbulence framework, fluctuations in local synchronization are used to define a vortex-space description of whole-brain dynamics (Deco et al., 2026; Deco et al., 2025). In the present thesis, however, these measures should be understood as local-synchronization heterogeneity measures, because no explicit detection of topological phase singularities or vortex cores was performed. Transition entropy $H_2$ was almost perfectly correlated with switch rate across participants ($r = 0.99$). It is therefore treated as a persistence-sensitive measure. The off-diagonal variants are used when the target quantity is destination diversity rather than persistence, with $H_{2,\mathrm{switch}}$ additionally conditioning the origin weights on switches.
 
 
 \subsection{Quality control}
