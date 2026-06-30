@@ -145,7 +145,7 @@ Four hypotheses were tested. The first three were confirmatory, and the fourth w
 
 \textbf{H2 (geometry).} Transition routing follows distance in synchronization space. An exponential distance-law model should reproduce the empirical off-diagonal transition structure, outperform a state-label permutation null, and generalize under leave-one-participant-out cross-validation.
 
-\textbf{H3 (maximum occupancy).} Maximum occupancy improves transition modelling beyond binary topology. Adding a destination cost to a recursive-value MOP model should improve held-out prediction over pure topology. In the stay/switch decomposition, state-specific stay probabilities should improve persistence modelling, while the destination cost should improve off-diagonal switch routing.
+\textbf{H3 (maximum occupancy).} Maximum occupancy may improve transition modelling beyond binary topology. Adding a destination cost to a recursive-value MOP model was expected to improve held-out prediction over pure topology. In the stay/switch decomposition, state-specific stay probabilities were expected to improve persistence modelling, whereas the destination cost was tested as a possible explanation of off-diagonal switch routing.
 
 
 \textbf{H4 (cognition).} Transition diversity relates to cognition. Transition probabilities should show above-null multivariate explanatory association with cognitive scores under a label-shuffle null. This signal is expected to be modest and mainly captured by linear models, with nonlinear models tested as exploratory alternatives.
@@ -184,6 +184,9 @@ R(c,t)=\left|\frac{1}{|S_c|}\sum_{j\in S_c} e^{i\phi_j(t)}\right|,
 where $S_c$ is the set of fine regions assigned to coarse parcel $c$, $|S_c|$ is the number of fine regions in that parcel, and $\phi_j(t)$ is the instantaneous phase of fine region $j$ at time $t$. This measure ranges from 0, meaning low phase coherence, to 1, meaning complete phase alignment. Local Kuramoto-based synchronization measures have been used to describe turbulence-like fluctuations in human brain activity (Deco \& Kringelbach, 2020). The resulting time-resolved map $R(c,t)$ of local synchronization across the 100 parcels formed the basis of the state analysis and the heterogeneity measures described in Section 2.1.3.
 
 \subsection{Definition of synchronization states}
+\begingroup
+\small
+\setstretch{1.2}
 
 Local synchronization maps from all participants and all time points were pooled into a single collection of instantaneous spatial patterns. For each pattern, the spatial mean was subtracted to remove the overall level of synchronization. This step made the analysis sensitive to the spatial configuration of local synchronization rather than to global synchronization amplitude. The parcel-wise values were then iteratively standardized so that parcels with different numbers of fine regions did not dominate the distances between patterns.
 
@@ -220,8 +223,12 @@ Pre-specified k-means atlas & 7 & Working partition used by the generative model
 \end{tabular}
 \end{table}
 
+\endgroup
 \FloatBarrier
 \subsection{Subject-level dynamic measures}
+\begingroup
+\footnotesize
+\setstretch{1.2}
 
 Each participant's state sequence $q_1,\ldots,q_L$ was summarized using the measures listed in Table~\ref{tab:subject_dynamic_measures}. State occupancy was defined as the fraction of volumes assigned to each state. Switch rate was defined as the fraction of consecutive volumes in which the assigned state changed. Transitions between consecutive states were counted in a $K \times K$ matrix $C$, where $C_{ij}$ is the number of observed transitions from state $i$ to state $j$. The transition count matrix was row-normalized to obtain the transition probability matrix:
 \begin{equation}
@@ -304,6 +311,7 @@ Global synchrony and metastability & $S, M$ & Temporal mean and temporal standar
 \end{table}
 Two measures require careful interpretation. $T_1$ and $T_2$ describe spatial and temporal variability in local synchronization. In the recent brain-turbulence framework, fluctuations in local synchronization are used to define a vortex-space description of whole-brain dynamics (Deco et al., 2026; Deco et al., 2025). In the present thesis, however, these measures should be understood as local-synchronization heterogeneity measures, because no explicit detection of topological phase singularities or vortex cores was performed. Transition entropy $H_2$ was almost perfectly correlated with switch rate across participants ($r = 0.99$). It is therefore treated as a persistence-sensitive measure. The off-diagonal variants are used when the target quantity is destination diversity rather than persistence, with $H_{2,\mathrm{switch}}$ additionally conditioning the origin weights on switches.
 
+\endgroup
 
 \subsection{Quality control}
 
@@ -777,9 +785,69 @@ The mechanistic findings were stable across these exclusions. The graded-geometr
 
 The entropy-cognition associations were more sensitive, as expected for modest individual-difference effects. However, partial correlations controlling for global synchrony, metastability, switch rate, and occupancy left the main pattern largely unchanged. This suggests that the association between transition entropy and cognition was not simply a by-product of overall synchronization level, metastability, switching frequency, or state occupancy. Finally, removing the designated single-case participant did not alter any main conclusion.
 
+\chapter{Discussion}
+This thesis examined whether resting-state synchronization dynamics can be described as a
+sequence of recurring local-synchrony states, whether transitions between those states are
+structured, and whether transition features relate to cognition. Three main findings emerged.
+First, the seven-state atlas provided a reproducible working partition of the data, but the
+state-space validation did not support seven sharply separated density components. The atlas
+should therefore be interpreted as a useful modelling scaffold rather than as evidence for seven
+discrete attractor states. Second, transition sequences were much more structured than expected
+from occupancy-preserving and dwell-preserving surrogate sequences. This shows that the
+ordering of states contains temporal information beyond how often states occur and how long
+they persist. Third, the generative models separated two parts of the transition matrix: geometric
+distance between state centroids explained switch routing, whereas state-specific persistence
+explained the diagonal.
+
+The graded-geometry model gave the clearest mechanistic result. A simple exponential
+distance law predicted which states were likely to follow one another after a switch. This supports
+the idea that resting-state transitions are locally organized in synchronization space: the brain is
+more likely to move between nearby synchronization patterns than between distant ones. However,
+this model did not explain persistence, because it had no separate stay-probability term. The
+dwell-bias analysis showed that persistence was strongly state-specific, indicating that the
+diagonal of the transition matrix should be treated separately from off-diagonal routing.
+
+The maximum occupancy principle produced a more limited result. Adding destination
+dispersion improved full-row prediction mainly by improving the diagonal, but it did not improve
+conditional switch routing. Thus, in this dataset, the MOP-style destination cost did not provide
+a better explanation of where the brain moves after leaving a state. The maximum occupancy
+principle may still be useful as a theoretical framework, but the present results suggest that its
+current operationalization is more closely related to persistence than to switch routing.
+
+The cognitive analyses provided weaker evidence. Transition entropy was positively associated
+with cognitive performance, especially working memory, but the individual entropy-cognition
+associations did not survive false-discovery-rate correction across all planned tests. The
+multivariate transition-cognition analysis showed above-null explanatory accuracy for working
+memory and cognitive flexibility, but this result should be interpreted cautiously. The feature
+mask was estimated on the full sample, so the reported cross-validated accuracies are conditional
+explanatory metrics rather than leakage-free estimates of prediction accuracy for new
+participants. These findings suggest that transition probabilities contain cognition-related
+individual-difference structure, but they are not sufficient to define a predictive biomarker.
+
+Several limitations should be noted. The state atlas was fixed at seven states and was not
+re-estimated inside cross-validation folds. This made the downstream analyses comparable across
+participants, but it also means that all model validation was conditional on the same group atlas.
+Motion, framewise displacement, nuisance-regression, and scrubbing files were not available
+with the local input files, so acquisition-level quality control could not be repeated. Family
+identifiers were also unavailable, so cross-validation could not preserve HCP family structure.
+Finally, the cognitive associations were modest and were not tested in an independent replication
+sample.
+
+Future work should test whether the same transition structure appears under fully family-aware
+validation, independent samples, and alternative parcellations or state definitions. The cognitive
+analysis should also be repeated using a fully nested feature-selection pipeline if the goal is
+external prediction. More detailed models could combine geometric distance, state-specific
+persistence, and maximum-occupancy-style value terms within a single model comparison
+framework.
+
+In conclusion, resting-state local-synchrony dynamics are not random. They show structured
+transition sequences, with switch routing largely explained by distance in synchronization space
+and persistence captured by state-specific dwell structure. Cognitive associations were present
+but modest. The strongest conclusion is therefore mechanistic rather than predictive: transition
+dynamics provide a useful way to characterize the temporal organization of resting-state brain
+activity.
+
+
 \chapter{Statement of Contribution}
-\addcontentsline{toc}{section}{Statement of Contribution}
-
 In accordance with the requirements for the Master's Thesis in Computational Neuroscience at Universitat Pompeu Fabra, this statement details the specific contributions made to the research presented in this document. The broad conceptual goals regarding brain turbulence and vortex spaces were formulated by Gustavo Deco, while the overarching objectives to evaluate resting-state transition patterns and test the maximum occupancy principle (MOP) as a generative transition hypothesis were collaboratively evolved by Gustavo Deco, Mohaddeseh Hosseinzadeh, and Ruben Moreno Bote. Methodologically, Gustavo Deco provided the foundational definition of local Kuramoto synchronization and the recommendation for a k-means clustering framework, and Ruben Moreno Bote originally conceptualized and formulated the core maximum occupancy principle. Mohaddeseh Hosseinzadeh independently designed and developed all other methodologies, including introducing the 50-dimensional principal component analysis (PCA) dimensionality reduction step, inventing the novel exponential graded-geometry distance model, designing the occupancy- and dwell-preserving surrogate null testing frameworks, and formulating the specific destination dispersion cost variant used to expand the MOP policy. Using raw data acquired by the Human Connectome Project consortium, Mohaddeseh Hosseinzadeh independently developed and implemented the entire computational pipeline in MATLAB. This included coding the PCA and clustering execution, the graded-geometry optimization loops, the surrogate-shuffling frameworks, and the custom recursive policy functions required to computationally implement the MOP equations alongside the destination dispersion cost function. For the multivariate predictive analyses, Mohaddeseh Hosseinzadeh utilized regularized ridge dominant elastic net regression provided by Gustavo Deco, adapting it to interface with the empirical transition matrices. Mohaddeseh Hosseinzadeh independently implemented the nonlinear machine-learning analysis pipelines, including support-vector regression, random forests, and gradient-boosted trees. She drafted the thesis and revised it in response to supervisory feedback. Gustavo Deco and Ruben Moreno Bote supervised the research, contributed to the interpretation of the findings, and reviewed the manuscript. All named contributors reviewed and approved the final version
-
 \end{document}
