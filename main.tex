@@ -2,8 +2,7 @@
 
 
 
-% This version compiles with pdfLaTeX in Overleaf.
-% It uses a Times-like font. Exact Times New Roman requires XeLaTeX or LuaLaTeX.
+
 \usepackage[a4paper,margin=1in]{geometry}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -12,7 +11,10 @@
 \usepackage{microtype}
 \usepackage{makecell}
 \usepackage{graphicx}
-
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[hidelinks]{hyperref}
+\usepackage{xurl}
 \usepackage{setspace}
 \onehalfspacing
 
@@ -828,7 +830,103 @@ The mechanistic findings were stable across the reported geometry exclusions. Th
 
 Contextual adjustment substantially attenuated the entropy-cognition associations. For example, $H_1$--g-factor decreased from $r=0.2038$ to partial $r=0.1085$ after all four covariates; $H_1$--List Sorting decreased from $r=0.1986$ to $r=-0.0273$; and $H_2$--List Sorting decreased from $r=0.1958$ to $r=0.0083$. No adjusted association survived correction. The strong attenuation after controlling for switch rate and maximum state occupancy indicates that the unadjusted entropy associations overlap substantially with related persistence and occupancy measures. Finally, removing the designated single-case participant did not alter the main mechanistic conclusions.
 
+\cleardoublepage
+\chapter{References}
+\markboth{References}{References}
 
+\begingroup
+\small
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.6em}
+\sloppy
+
+\newcommand{\bibentry}[1]{%
+  \hangindent=0.5in
+  \hangafter=1
+  #1\par
+}
+
+\bibentry{Allen, E. A., Damaraju, E., Plis, S. M., Erhardt, E. B., Eichele, T., \& Calhoun, V. D. (2014). Tracking whole-brain connectivity dynamics in the resting state. \textit{Cerebral Cortex, 24}(3), 663--676. \url{https://doi.org/10.1093/cercor/bhs352}}
+
+\bibentry{Barch, D. M., Burgess, G. C., Harms, M. P., Petersen, S. E., Schlaggar, B. L., Corbetta, M., Glasser, M. F., Curtiss, S., Dixit, S., Feldt, C., Nolan, D., Bryant, E., Hartley, T., Footer, O., Bjork, J. M., Poldrack, R., Smith, S., Johansen-Berg, H., Snyder, A. Z., Van Essen, D. C., \& WU-Minn HCP Consortium. (2013). Function in the human connectome: Task-fMRI and individual differences in behavior. \textit{NeuroImage, 80}, 169--189. \url{https://doi.org/10.1016/j.neuroimage.2013.05.033}}
+
+\bibentry{Benjamini, Y., \& Hochberg, Y. (1995). Controlling the false discovery rate: A practical and powerful approach to multiple testing. \textit{Journal of the Royal Statistical Society: Series B (Methodological), 57}(1), 289--300. \url{https://doi.org/10.1111/j.2517-6161.1995.tb02031.x}}
+
+\bibentry{Biswal, B., Yetkin, F. Z., Haughton, V. M., \& Hyde, J. S. (1995). Functional connectivity in the motor cortex of resting human brain using echo-planar MRI. \textit{Magnetic Resonance in Medicine, 34}(4), 537--541. \url{https://doi.org/10.1002/mrm.1910340409}}
+
+\bibentry{Breiman, L. (2001). Random forests. \textit{Machine Learning, 45}(1), 5--32. \url{https://doi.org/10.1023/A:1010933404324}}
+
+\bibentry{Butterworth, S. (1930). On the theory of filter amplifiers. \textit{Experimental Wireless and the Wireless Engineer, 7}, 536--541.}
+
+\bibentry{Cabral, J., Vidaurre, D., Marques, P., Magalhães, R., Moreira, P. S., Soares, J. M., Deco, G., Sousa, N., \& Kringelbach, M. L. (2017). Cognitive performance in healthy older adults relates to spontaneous switching between states of functional connectivity during rest. \textit{Scientific Reports, 7}, 5135. \url{https://doi.org/10.1038/s41598-017-05425-7}}
+
+\bibentry{Deco, G., \& Kringelbach, M. L. (2020). Turbulent-like dynamics in the human brain. \textit{Cell Reports, 33}(10), 108471. \url{https://doi.org/10.1016/j.celrep.2020.108471}}
+
+\bibentry{Deco, G., \& Kringelbach, M. L. (2026). \textit{Whole-brain modelling: Cartography of the dynamics of mind}. Oxford University Press. \url{https://doi.org/10.1093/oso/9780198991250.001.0001}}
+
+\bibentry{Deco, G., Kringelbach, M. L., Jirsa, V. K., \& Ritter, P. (2017). The dynamics of resting fluctuations in the brain: Metastability and its dynamical cortical core. \textit{Scientific Reports, 7}, 3095. \url{https://doi.org/10.1038/s41598-017-03073-5}}
+
+\bibentry{Deco, G., Perl, Y. S., Jerotic, K., Escrichs, A., \& Kringelbach, M. L. (2025). Turbulence as a framework for brain dynamics in health and disease. \textit{Neuroscience and Biobehavioral Reviews, 169}, 105988. \url{https://doi.org/10.1016/j.neubiorev.2024.105988}}
+
+\bibentry{Drucker, H., Burges, C. J. C., Kaufman, L., Smola, A. J., \& Vapnik, V. (1997). Support vector regression machines. In \textit{Advances in Neural Information Processing Systems} (Vol. 9, pp. 155--161).}
+
+\bibentry{Efron, B., \& Tibshirani, R. J. (1993). \textit{An introduction to the bootstrap}. Chapman \& Hall.}
+
+\bibentry{Escrichs, A., Sanz Perl, Y., Uribe, C., Camara, E., Türker, B., Pyatigorskaya, N., López-González, A., Pallavicini, C., Panda, R., Annen, J., Gosseries, O., Laureys, S., Naccache, L., Sitt, J. D., Laufs, H., Tagliazucchi, E., Kringelbach, M. L., \& Deco, G. (2022). Unifying turbulent dynamics framework distinguishes different brain states. \textit{Communications Biology, 5}, 638. \url{https://doi.org/10.1038/s42003-022-03576-6}}
+
+\bibentry{Friedman, J. H. (2001). Greedy function approximation: A gradient boosting machine. \textit{The Annals of Statistics, 29}(5), 1189--1232. \url{https://doi.org/10.1214/aos/1013203451}}
+
+\bibentry{Glerean, E., Salmi, J., Lahnakoski, J. M., Jääskeläinen, I. P., \& Sams, M. (2012). Functional magnetic resonance imaging phase synchronization as a measure of dynamic functional connectivity. \textit{Brain Connectivity, 2}(2), 91--101. \url{https://doi.org/10.1089/brain.2011.0068}}
+
+\bibentry{Gur, R. C., Richard, J., Hughett, P., Calkins, M. E., Macy, L., Bilker, W. B., Brensinger, C., \& Gur, R. E. (2010). A cognitive neuroscience-based computerized battery for efficient measurement of individual differences: Standardization and initial construct validation. \textit{Journal of Neuroscience Methods, 187}(2), 254--262. \url{https://doi.org/10.1016/j.jneumeth.2009.11.017}}
+
+\bibentry{Hastie, T., Tibshirani, R., \& Friedman, J. (2009). \textit{The elements of statistical learning: Data mining, inference, and prediction} (2nd ed.). Springer. \url{https://doi.org/10.1007/978-0-387-84858-7}}
+
+\bibentry{Human Connectome Project. (n.d.). \textit{HCP 7T imaging protocol overview}. \url{https://www.humanconnectome.org/hcp-protocols-ya-7t-imaging}}
+
+\bibentry{Hubert, L., \& Arabie, P. (1985). Comparing partitions. \textit{Journal of Classification, 2}(1), 193--218. \url{https://doi.org/10.1007/BF01908075}}
+
+\bibentry{Jolliffe, I. T. (2002). \textit{Principal component analysis} (2nd ed.). Springer.}
+
+\bibentry{Kuramoto, Y. (1984). \textit{Chemical oscillations, waves, and turbulence}. Springer. \url{https://doi.org/10.1007/978-3-642-69689-3}}
+
+\bibentry{Marek, S., Tervo-Clemmens, B., Calabro, F. J., Montez, D. F., Kay, B. P., Hatoum, A. S., Donohue, M. R., Foran, W., Miller, R. L., Feczko, E., Miranda-Dominguez, O., Graham, A. M., Earl, E. A., Perrone, A. J., Cordova, M., Doyle, O., Moore, L. A., Conan, G. M., Uriarte, J., \ldots{} Dosenbach, N. U. F. (2022). Reproducible brain-wide association studies require thousands of individuals. \textit{Nature, 603}, 654--660. \url{https://doi.org/10.1038/s41586-022-04492-9}}
+
+\bibentry{McLachlan, G., \& Peel, D. (2000). \textit{Finite mixture models}. Wiley. \url{https://doi.org/10.1002/0471721182}}
+
+\bibentry{Nichols, T. E., \& Holmes, A. P. (2002). Nonparametric permutation tests for functional neuroimaging: A primer with examples. \textit{Human Brain Mapping, 15}(1), 1--25. \url{https://doi.org/10.1002/hbm.1058}}
+
+\bibentry{Phipson, B., \& Smyth, G. K. (2010). Permutation p-values should never be zero: Calculating exact p-values when permutations are randomly drawn. \textit{Statistical Applications in Genetics and Molecular Biology, 9}(1), Article 39. \url{https://doi.org/10.2202/1544-6115.1585}}
+
+\bibentry{Ramírez-Ruiz, J., Grytskyy, D., Mastrogiuseppe, C., Habib, Y., \& Moreno-Bote, R. (2024). Complex behavior from intrinsic motivation to occupy future action-state path space. \textit{Nature Communications, 15}, 6368. \url{https://doi.org/10.1038/s41467-024-49711-1}}
+
+\bibentry{Rousseeuw, P. J. (1987). Silhouettes: A graphical aid to the interpretation and validation of cluster analysis. \textit{Journal of Computational and Applied Mathematics, 20}, 53--65. \url{https://doi.org/10.1016/0377-0427(87)90125-7}}
+
+\bibentry{Schaefer, A., Kong, R., Gordon, E. M., Laumann, T. O., Zuo, X.-N., Holmes, A. J., Eickhoff, S. B., \& Yeo, B. T. T. (2018). Local-global parcellation of the human cerebral cortex from intrinsic functional connectivity MRI. \textit{Cerebral Cortex, 28}(9), 3095--3114. \url{https://doi.org/10.1093/cercor/bhx179}}
+
+\bibentry{Schwarz, G. (1978). Estimating the dimension of a model. \textit{The Annals of Statistics, 6}(2), 461--464. \url{https://doi.org/10.1214/aos/1176344136}}
+
+\bibentry{Shannon, C. E. (1948). A mathematical theory of communication. \textit{The Bell System Technical Journal, 27}(3), 379--423; \textit{27}(4), 623--656. \url{https://doi.org/10.1002/j.1538-7305.1948.tb01338.x}}
+
+\bibentry{Shen, X., Finn, E. S., Scheinost, D., Rosenberg, M. D., Chun, M. M., Papademetris, X., \& Constable, R. T. (2017). Using connectome-based predictive modeling to predict individual behavior from brain connectivity. \textit{Nature Protocols, 12}, 506--518. \url{https://doi.org/10.1038/nprot.2016.178}}
+
+\bibentry{Spearman, C. (1904). “General intelligence,” objectively determined and measured. \textit{The American Journal of Psychology, 15}(2), 201--292. \url{https://doi.org/10.2307/1412107}}
+
+\bibentry{Theiler, J., Eubank, S., Longtin, A., Galdrikian, B., \& Farmer, J. D. (1992). Testing for nonlinearity in time series: The method of surrogate data. \textit{Physica D: Nonlinear Phenomena, 58}(1--4), 77--94. \url{https://doi.org/10.1016/0167-2789(92)90102-S}}
+
+\bibentry{Van Essen, D. C., Smith, S. M., Barch, D. M., Behrens, T. E. J., Yacoub, E., Ugurbil, K., \& WU-Minn HCP Consortium. (2013). The WU-Minn Human Connectome Project: An overview. \textit{NeuroImage, 80}, 62--79. \url{https://doi.org/10.1016/j.neuroimage.2013.05.041}}
+
+\bibentry{Vidaurre, D., Smith, S. M., \& Woolrich, M. W. (2017). Brain network dynamics are hierarchically organized in time. \textit{Proceedings of the National Academy of Sciences, 114}(48), 12827--12832. \url{https://doi.org/10.1073/pnas.1705120114}}
+
+\bibentry{Weintraub, S., Dikmen, S. S., Heaton, R. K., Tulsky, D. S., Zelazo, P. D., Bauer, P. J., Carlozzi, N. E., Slotkin, J., Blitz, D., Wallner-Allen, K., Fox, N. A., Beaumont, J. L., Mungas, D., Nowinski, C. J., Richler, J., Deocampo, J. A., Anderson, J. E., Manly, J. J., Borosh, B., \ldots{} Gershon, R. C. (2013). Cognition assessment using the NIH Toolbox. \textit{Neurology, 80}(11 Suppl 3), S54--S64. \url{https://doi.org/10.1212/WNL.0b013e3182872ded}}
+
+\bibentry{Winkler, A. M., Ridgway, G. R., Webster, M. A., Smith, S. M., \& Nichols, T. E. (2014). Permutation inference for the general linear model. \textit{NeuroImage, 92}, 381--397. \url{https://doi.org/10.1016/j.neuroimage.2014.01.060}}
+
+\bibentry{WU-Minn HCP Consortium. (2017). \textit{WU-Minn HCP 1200 Subjects Data Release: Reference Manual}. Human Connectome Project. \url{https://www.humanconnectome.org/storage/app/media/documentation/s1200/HCP_S1200_Release_Reference_Manual.pdf}}
+
+\bibentry{Zou, H., \& Hastie, T. (2005). Regularization and variable selection via the elastic net. \textit{Journal of the Royal Statistical Society: Series B (Statistical Methodology), 67}(2), 301--320. \url{https://doi.org/10.1111/j.1467-9868.2005.00503.x}}
+
+\endgroup
 
 
 \chapter{Discussion}
