@@ -97,14 +97,21 @@
 \newcommand{\appendixpanelgraphic}[1]{%
   \includegraphics[
     width=\textwidth,
-    height=0.27\textheight,
+    height=0.34\textheight,
     keepaspectratio
   ]{#1}%
 }
 \newcommand{\appendixfirstpanelgraphic}[1]{%
   \includegraphics[
     width=\textwidth,
-    height=0.235\textheight,
+    height=0.28\textheight,
+    keepaspectratio
+  ]{#1}%
+}
+\newcommand{\appendixdensepanelgraphic}[1]{%
+  \includegraphics[
+    width=\textwidth,
+    height=0.41\textheight,
     keepaspectratio
   ]{#1}%
 }
@@ -1125,12 +1132,12 @@ This appendix presents the principal graphical outputs supporting Chapter 3. The
 \end{scope}
 \end{tikzpicture}
 \caption{\textbf{Seven-state synchronization atlas and clustering diagnostics.}
-\textbf{(A)} K-means inertia across candidate state counts.
-\textbf{(B)} Mean silhouette width across candidate counts.
-\textbf{(C)} Number of volumes assigned to each of the seven states.
-\textbf{(D)} State-centroid profiles in local-synchronization space.
-\textbf{(E)} State labels projected onto the first two principal components.
-The seven-state solution is treated as a predefined working atlas rather than an optimal discrete partition.}
+\textbf{(A)} K-means inertia;
+\textbf{(B)} mean silhouette width;
+\textbf{(C)} state sizes;
+\textbf{(D)} centroid profiles in local-synchronization space; and
+\textbf{(E)} state labels in the first two principal components.
+The seven-state solution is the working atlas, not evidence for an optimal discrete partition.}
 \label{fig:app-state-atlas}
 \vspace{0.5em}
 \begin{tikzpicture}
@@ -1149,13 +1156,13 @@ The seven-state solution is treated as a predefined working atlas rather than an
 \end{scope}
 \end{tikzpicture}
 \caption{\textbf{State assignments and participant-level dynamic summaries.}
-\textbf{(A--C)} Example state sequences for three participants.
-\textbf{(D)} Distance of each volume from its assigned centroid.
-\textbf{(E)} Participant-by-state occupancy matrix.
-\textbf{(F)} Mean occupancy of each state.
-\textbf{(G)} Pooled group transition-probability matrix.
-\textbf{(H)} Distribution of participant switch rates.
-\textbf{(I)} State-specific dwell-time distributions.}
+\textbf{(A--C)} Example state sequences;
+\textbf{(D)} distance from the assigned centroid;
+\textbf{(E)} participant-by-state occupancy;
+\textbf{(F)} mean occupancy;
+\textbf{(G)} pooled transition matrix;
+\textbf{(H)} switch-rate distribution; and
+\textbf{(I)} state-specific dwell distributions.}
 \label{fig:app-state-dynamics}
 \end{figure}
 
@@ -1284,7 +1291,7 @@ Off-diagonal correlations are consistently positive, whereas diagonal correlatio
 \centering
 \begin{tikzpicture}
 \node[anchor=south west,inner sep=0] (image) at (0,0)
-  {\appendixpanelgraphic{figures/appendix/a09_geometry_cognition.png}};
+  {\appendixdensepanelgraphic{figures/appendix/a09_geometry_cognition.png}};
 \begin{scope}[x={(image.south east)},y={(image.north west)}]
 \node[panel label] at (0.01,0.98) {A};
 \end{scope}
@@ -1295,7 +1302,7 @@ Off-diagonal correlations are consistently positive, whereas diagonal correlatio
 \vspace{0.5em}
 \begin{tikzpicture}
 \node[anchor=south west,inner sep=0] (image) at (0,0)
-  {\appendixpanelgraphic{figures/appendix/a10_dwell_bias.png}};
+  {\appendixdensepanelgraphic{figures/appendix/a10_dwell_bias.png}};
 \begin{scope}[x={(image.south east)},y={(image.north west)}]
 \node[panel label] at (0.01,0.98) {A};
 \node[panel label] at (0.26,0.98) {B};
@@ -1331,7 +1338,7 @@ Off-diagonal correlations are consistently positive, whereas diagonal correlatio
 \centering
 \begin{tikzpicture}
 \node[anchor=south west,inner sep=0] (image) at (0,0)
-  {\appendixpanelgraphic{figures/appendix/a11_binary_mop.png}};
+  {\appendixdensepanelgraphic{figures/appendix/a11_binary_mop.png}};
 \begin{scope}[x={(image.south east)},y={(image.north west)}]
 \node[panel label] at (0.01,0.98) {A};
 \node[panel label] at (0.26,0.98) {B};
@@ -1348,23 +1355,22 @@ Off-diagonal correlations are consistently positive, whereas diagonal correlatio
 \end{scope}
 \end{tikzpicture}
 \caption{\textbf{Binary-action maximum-occupancy comparison.}
-\textbf{(A)} Empirical transition matrix.
-\textbf{(B)} Pure MOP prediction.
-\textbf{(C)} Dispersion-cost prediction.
-\textbf{(D)} Difference between fitted matrices.
-\textbf{(E)} Pure-MOP predicted versus empirical probabilities.
-\textbf{(F)} Dispersion-model fit for all entries.
-\textbf{(G)} Dispersion-model diagonal fit.
-\textbf{(H)} Full-sample likelihood.
-\textbf{(I)} Predicted--empirical correlations.
-\textbf{(J)} Diagonal performance.
-\textbf{(K)} Retained destination-cost estimate.
-\textbf{(L)} Key held-out improvements.}
+\textbf{(A)} Empirical matrix;
+\textbf{(B)} pure-MOP prediction;
+\textbf{(C)} dispersion-cost prediction;
+\textbf{(D)} fitted-matrix difference;
+\textbf{(E)} pure-MOP fit;
+\textbf{(F--G)} dispersion-model full and diagonal fits;
+\textbf{(H)} full-sample likelihood;
+\textbf{(I)} correlations;
+\textbf{(J)} diagonal performance;
+\textbf{(K)} retained destination cost; and
+\textbf{(L)} held-out improvements.}
 \label{fig:app-binary-mop}
 \vspace{0.5em}
 \begin{tikzpicture}
 \node[anchor=south west,inner sep=0] (image) at (0,0)
-  {\appendixpanelgraphic{figures/appendix/a12_stay_switch_mop.png}};
+  {\appendixdensepanelgraphic{figures/appendix/a12_stay_switch_mop.png}};
 \begin{scope}[x={(image.south east)},y={(image.north west)}]
 \node[panel label] at (0.01,0.98) {A};
 \node[panel label] at (0.21,0.98) {B};
@@ -1384,20 +1390,16 @@ Off-diagonal correlations are consistently positive, whereas diagonal correlatio
 \end{scope}
 \end{tikzpicture}
 \caption{\textbf{Stay/switch decomposition and off-diagonal MOP comparison.}
-\textbf{(A)} Empirical full transition matrix.
-\textbf{(B)} Empirical switch-routing matrix.
-\textbf{(C)} Topology-only switch policy.
-\textbf{(D)} Dispersion-cost switch policy.
-\textbf{(E--F)} Predicted versus empirical routing for the two policies.
-\textbf{(G)} Group switch-routing NLL.
-\textbf{(H)} Group routing metrics.
-\textbf{(I)} Retained destination cost.
-\textbf{(J)} Retained stay gates.
-\textbf{(K)} Two-stage full-transition NLL.
-\textbf{(L)} Two-stage correlations.
-\textbf{(M)} Held-out switch-routing improvement.
-\textbf{(N)} Held-out two-stage MOP improvement.
-\textbf{(O)} Held-out NLL comparison.}
+\textbf{(A)} Full empirical matrix;
+\textbf{(B)} empirical switch routing;
+\textbf{(C--D)} topology-only and dispersion-cost policies;
+\textbf{(E--F)} their routing fits;
+\textbf{(G--H)} group routing NLL and metrics;
+\textbf{(I--J)} retained destination cost and stay gates;
+\textbf{(K--L)} two-stage NLL and correlations;
+\textbf{(M)} held-out routing improvement;
+\textbf{(N)} held-out two-stage MOP improvement; and
+\textbf{(O)} held-out NLL comparison.}
 \label{fig:app-stay-switch-mop}
 \end{figure}
 
