@@ -350,20 +350,21 @@ Sensitivity scope differed by analysis. Geometry evaluated exclusions of the 12 
 
 Cognitive performance was measured using cognitive variables from the HCP behavioural battery. The HCP behavioural battery was designed to measure individual differences in cognitive, emotional, sensory, and motor function (Barch et al., 2013). The cognitive variables used here were drawn from the NIH Toolbox cognition battery and Penn computerized neurocognitive tests, which assess domains such as fluid reasoning, processing speed, cognitive flexibility, working memory, inhibitory control, and vocabulary knowledge (Weintraub et al., 2013; Gur et al., 2010).
 
-A general cognitive factor, $g$, used ten indicators:
-{\centering
-\scriptsize
-\begin{tabular}{@{}lll@{}}
+A general cognitive factor, \(g\), was estimated from ten cognitive indicators:
+
+\begin{center}
+\begin{tabular}{lll}
 \texttt{PMAT24\_A\_CR} & \texttt{ProcSpeed\_Unadj} & \texttt{CardSort\_Unadj} \\
 \texttt{ListSort\_Unadj} & \texttt{Flanker\_Unadj} & \texttt{VSPLOT\_TC} \\
 \texttt{IWRD\_TOT} & \texttt{PicSeq\_Unadj} & \texttt{ReadEng\_Unadj} \\
-\texttt{PicVocab\_Unadj} & &
+\texttt{PicVocab\_Unadj} & & \\
 \end{tabular}
-\par}
-Indicators were z-scored across complete cases. MATLAB \texttt{factoran} fitted a one-factor
-model by maximum likelihood. Its sign was oriented to correlate positively with the mean
-standardized test score. One participant had incomplete
-data, giving $N=181$ for $g$ (Spearman, 1904).
+\end{center}
+
+Indicators were z-scored across complete cases. MATLAB \texttt{factoran} fitted a
+one-factor model by maximum likelihood. The factor sign was oriented so that the factor
+score correlated positively with the mean standardized test score. One participant had
+incomplete data, giving \(N = 181\) for \(g\) (Spearman, 1904).
 
 Outcome families were analysis-specific. Entropy analyses used $g$, Penn Matrix Reasoning (PMAT), Processing Speed, Card Sort, List Sort, Flanker, and Picture Vocabulary. Geometry used $g$ plus all ten component indicators listed above. Multivariate transition mapping used five outcomes: List Sort, PMAT, $g$, Flanker, and Card Sort.
 
