@@ -157,25 +157,26 @@ Four hypotheses were tested. The first three were confirmatory, and the fourth w
 
 
 \chapter{Materials and Methods}
-The analysis had two broad parts. The first part constructed the synchronization-state representation from resting-state functional MRI and derived participant-level dynamic measures. This included preprocessing the regional signals, computing local Kuramoto synchronization, defining the seven-state atlas, validating the atlas as a working partition of a continuous state space, and summarizing each participant's occupancy, dwell time, transition probabilities, entropy, and synchronization heterogeneity. The second part tested the structure and cognitive relevance of these dynamics. This included surrogate-null tests of transition structure, generative models of transition probabilities, persistence and maximum-occupancy models, and univariate and multivariate associations between transition features and cognitive performance. Parameter values are reported where they affect the results, and the central quantities are defined formally as equations. All processing was carried out in MATLAB.
+The analysis had two broad parts. The first part constructed the synchronization-state representation from resting-state functional MRI and derived participant-level dynamic measures. This included preprocessing the regional signals, computing local Kuramoto synchronization, defining the seven-state atlas, validating the atlas as a working partition of a continuous state space, and summarizing each participant's occupancy, dwell time, transition probabilities, entropy, and synchronization heterogeneity. The second part tested the structure and cognitive relevance of these dynamics. This included surrogate-null tests of transition structure, generative models of transition probabilities, persistence and maximum-occupancy models, and univariate and multivariate associations between transition features and cognitive performance. Parameter values are reported where they affect the results, and the central quantities are defined formally as equations. Analyses were performed in MATLAB R2025b Update 3, version 25.2.0.3123386, using the Signal Processing and Statistics and Machine Learning toolboxes.
 
 \textbf{Notation.} Throughout, a participant's parcel signals are indexed by region and time; $\phi_n(t)$ denotes instantaneous phase; $q_t \in \{1, \ldots, K\}$ is the discrete state occupied at volume $t$; $L$ is the number of volumes; $K = 7$ is the number of states; $N = 100$ is the number of coarse parcels; and $S_c$ is the set of fine regions in coarse parcel $c$, with $|S_c|$ its size. Transition counts are denoted by $C_{ij}$, and transition probabilities by $P_{ij}$. Square brackets $[\cdot]$ denote the Iverson bracket, equal to 1 when the enclosed condition holds and 0 otherwise. Entropies use base-2 logarithms.
 
 \section{Data, state representation and measures}
 This part describes the data, the construction of the synchronization-state representation, the participant-level measures derived from it, and the behavioural measures used in the analyses of Section 2.2.
 
-The analysis used resting-state 7 Tesla fMRI data from the Human Connectome Project Young Adult dataset (Van Essen et al., 2013). The input data consisted of the REST1 phase-encoding PA run, parcellated into 1000 Schaefer cortical parcels and then
-coarsened to 100 cortical parcels using a predefined Schaefer 1000-to-100 mapping
-(Schaefer et al., 2018). The final analytic sample contained 182 participants. Each
-participant contributed 900 volumes sampled with \(\mathrm{TR} = 1.0\,\mathrm{s}\). The analysis was
-performed on regional time series rather than voxel-level data. Motion, framewise
-displacement, nuisance-regression, and scrubbing files were not available with the
-local input files, so acquisition-level quality control could not be repeated in this
-analysis.
+The analysis used resting-state 7 Tesla fMRI data from the Human Connectome Project Young Adult dataset (Van Essen et al., 2013). The input data consisted of the REST1 phase-encoding PA run, parcellated into 1000 Schaefer cortical parcels and then coarsened to 100 cortical parcels using a predefined Schaefer 1000-to-100 mapping (Schaefer et al., 2018). The final analytic sample contained 182 participants, aged 22--36 years (mean 27.53, SD 3.27), including 72 men and 110 women. Each participant contributed 900 volumes sampled with $\mathrm{TR}=1.0\,\mathrm{s}$, corresponding to a 15-minute analysed time series.
+
+The local input cohort was already assembled as a file containing these 182 participant identifiers; the analysis code requested exactly those participants rather than constructing a cohort from the full HCP release. Operational inclusion required presence in that local input and a readable REST1-PA parcel time series. No additional participant was excluded by the present pipeline. The upstream procedure by which the 182-person file was selected, including any earlier inclusion or exclusion criteria, was not documented in the locally available files and therefore could not be reconstructed.
+
+According to the HCP 7T protocol, data were acquired on a Siemens Magnetom 7T scanner at the University of Minnesota Center for Magnetic Resonance Research using a Nova32 32-channel receive head coil. Resting-state images used gradient-echo EPI with 1.6-mm isotropic voxels, $\mathrm{TR}=1000$ ms, $\mathrm{TE}=22.2$ ms, flip angle $45^\circ$, 85 slices, multiband factor 5, and in-plane acceleration factor 2. REST1-PA was the first-session resting-state run, acquired with posterior-to-anterior phase encoding while participants rested with eyes open and fixated a cross-hair (HCP S1200 Release Reference Manual; HCP 7T Imaging Protocol).
+
+The analysis was performed on regional time series rather than voxel-level data. It assumed that the supplied parcel time series had undergone appropriate HCP preprocessing and denoising. FIX denoising, nuisance regression, censoring, and motion handling could not be confirmed from the locally available files. Motion, framewise displacement, nuisance-regression, and scrubbing records were also unavailable, so acquisition-level quality control could not be repeated.
+
+HCP participants provided written informed consent under the original HCP protocol, which was approved by the Washington University Institutional Review Board (Van Essen et al., 2013). This secondary analysis used de-identified HCP data in accordance with the applicable HCP data-use terms and involved no new recruitment or intervention.
 
 \subsection{Preprocessing and synchronization features}
 
-For each participant, every regional time series was screened for missing values. Regions that were entirely invalid for a participant were excluded from that participant's coarse-parcel averages, and isolated invalid samples were interpolated. Each remaining time series was band-pass filtered between 0.01 and 0.10 Hz using a zero-phase fourth-order Butterworth filter. The frequency range was chosen to retain the low-frequency fluctuations commonly studied in resting-state fMRI (Biswal et al., 1995), and the filter type follows the classical Butterworth design (Butterworth, 1930). Each filtered time series was then standardized to zero mean and unit variance and averaged within each of the 100 coarse parcels.
+For each participant, every regional time series was screened for missing values. Non-finite samples were filled by linear interpolation with linear extrapolation at the boundaries. Fine parcels that were entirely invalid were excluded from their coarse-parcel average. If an entire coarse parcel had no valid fine parcels, the implementation would fill that parcel with zeros; this did not occur in the current data. Each remaining time series was band-pass filtered between 0.01 and 0.10 Hz using a zero-phase fourth-order Butterworth filter. The frequency range was chosen to retain the low-frequency fluctuations commonly studied in resting-state fMRI (Biswal et al., 1995), and the filter type follows the classical Butterworth design (Butterworth, 1930). Each filtered fine-parcel time series was then standardized to zero mean and unit variance before averaging within each of the 100 coarse parcels.
 
 Because the coarse parcels contained unequal numbers of fine regions, including eight parcels with five or fewer fine regions, the dependence of synchronization on parcel size was checked. This dependence was present in the raw signal ($r = -0.325$, $p \approx 0.001$), but was absent from the standardized features used for clustering ($|r| \leq 0.13$).
 
@@ -192,23 +193,27 @@ where $S_c$ is the set of fine regions assigned to coarse parcel $c$, $|S_c|$ is
 \small
 \setstretch{1.2}
 
-Local synchronization maps from all participants and all time points were pooled into a single collection of instantaneous spatial patterns. For each pattern, the spatial mean was subtracted to remove the overall level of synchronization. This step made the analysis sensitive to the spatial configuration of local synchronization rather than to global synchronization amplitude. The parcel-wise values were then iteratively standardized so that parcels with different numbers of fine regions did not dominate the distances between patterns.
+Local synchronization maps from all participants and all time points were pooled into a single collection of instantaneous spatial patterns. Feature normalization used 10 iterations. Each iteration z-scored every parcel across pooled observations and then removed each observation's spatial mean. This made the analysis sensitive to spatial configuration rather than global synchronization amplitude and reduced domination by parcels with different scales.
 
 The resulting patterns were reduced to 50 principal components using principal component analysis (Jolliffe, 2002). These components explained 73.9\% of the variance, with 7.0\% explained by the first component and 32.5\% by the first ten components. The reduced patterns were then partitioned using k-means clustering with squared Euclidean distance. This follows the general approach of dynamic functional connectivity studies that define recurring brain states by clustering time-resolved whole-brain patterns (Allen et al., 2014; Cabral et al., 2017).
 
-Seven states were adopted as the primary atlas. This number was fixed in advance to match the seven-state generative models examined later, rather than selected from the data. It is therefore treated as a pre-specified modelling choice throughout the thesis. As a descriptive check, clustering solutions from two to thirty states were compared using within-cluster dispersion and average silhouette width. Silhouette width was used as a standard cluster-validity measure (Rousseeuw, 1987). Silhouette values were low across the full range and were highest at two clusters, 0.107 compared with 0.025 at seven clusters. This pattern is consistent with a continuous state space rather than a sharply separated set of discrete clusters. The seven-state atlas is therefore interpreted as a working partition of the dynamics, not as evidence for seven discrete attractors.
+Seven states were adopted as the primary atlas. This number was fixed in advance to match the seven-state generative models examined later, rather than selected from the data. It is therefore treated as a pre-specified modelling choice throughout the thesis. The random-number seed was 42. K-means used squared Euclidean distance, a maximum of 1,000 iterations, 20 replicates for the primary $K=7$ atlas, and five replicates for other values. The descriptive grid was $K=\{2,3,4,5,6,7,8,10,13,17,21,25,30\}$. Within-cluster dispersion and average silhouette width were compared; silhouette was evaluated on a random sample of 5,000 observations rather than all 163,800 pooled observations (Rousseeuw, 1987). Silhouette values were low and were highest at $K=2$, 0.107 compared with 0.025 at $K=7$. This pattern is consistent with a continuous state space rather than sharply separated discrete clusters. The seven-state atlas is therefore interpreted as a working partition, not evidence for seven discrete attractors.
 
-Atlas stability was assessed in two ways. First, repeated clustering of resampled time points reproduced the seven-state solution closely, with a mean adjusted Rand index of 0.82. Second, re-deriving the atlas from independent halves of the participants gave a more variable solution, with a mean adjusted Rand index of 0.64. The adjusted Rand index was used to quantify agreement between clustering solutions while correcting for chance agreement (Hubert \& Arabie, 1985). A control analysis clustered the synchronization maps without first removing the global synchronization level. This produced a markedly different atlas, with an adjusted Rand index of 0.22 relative to the primary solution. State labels accounted for 25.2\% of the variance in mean local synchronization in the primary atlas, compared with 87.8\% in the uncorrected atlas. This confirmed that removing the global level made the primary states reflect spatial configuration rather than overall synchronization amplitude.
+Atlas stability was assessed in two ways. Time-point stability used 10,000 sampled observations, eight repetitions, and one k-means replicate per repetition; it reproduced the seven-state solution with mean adjusted Rand index 0.82. Because this resampling did not preserve temporal autocorrelation, it was treated as the weaker check. Participant-split stability used six random splits, fitted each half on 30,000 sampled observations, and evaluated agreement on 15,000 observations; its mean adjusted Rand index was 0.64. This participant-level split was the stronger independence check. The adjusted Rand index corrected agreement between clustering solutions for chance (Hubert \& Arabie, 1985).
 
-Each participant's data were assigned to the fixed group atlas without individual re-clustering. The participant's local synchronization maps were standardized using the group parameters, projected onto the group principal components, and labelled according to the nearest of the seven group centroids. The resulting state sequences were used for all subsequent measures. This kept the state representation identical across participants and made later cross-validation conditional on the same fixed atlas.
+A control analysis clustered the synchronization maps without removing the global synchronization level. This produced a markedly different atlas, with adjusted Rand index 0.22 relative to the primary solution. State labels accounted for 25.2\% of the variance in instantaneous mean local synchronization in the primary atlas and 87.8\% in the uncorrected atlas. This confirmed that removing the global level made the primary states reflect spatial configuration rather than overall synchronization amplitude.
+
+Each participant's data were assigned to the fixed group atlas without individual re-clustering. PCA loadings, normalization parameters, and k-means centroids were estimated using all participants and all volumes. The resulting representation was then frozen for downstream analyses. Consequently, downstream cross-validation was conditional on this transductive full-sample representation and was not end-to-end out-of-sample validation.
 
 \subsubsection{Distributional validation of the seven-state description}
 
-Because the number of states was fixed by design, a separate analysis tested whether seven components provided an adequate description of the pooled density in the same 50-dimensional PCA space. This analysis also tested how closely probabilistic density components corresponded to the seven k-means states. Gaussian mixture models with one to sixty components were fitted using expectation-maximization with diagonal covariance matrices, regularization, and multiple restarts for numerical stability (McLachlan \& Peel, 2000).
+Because the number of states was fixed by design, a separate analysis tested whether seven components adequately described the pooled density. Descriptive fits used the canonical 50-dimensional PCA representation. During participant-blocked cross-validation, PCA was re-estimated separately inside each training fold and held-out participants were projected into that fold-specific PCA space. Thus, unlike the downstream transition models, this density cross-validation did not reuse the canonical PCA loadings.
 
-Model complexity was evaluated using both penalized in-sample fit and out-of-sample fit. The Bayesian information criterion was used as the penalized in-sample criterion (Schwarz, 1978). Out-of-sample likelihood was estimated using one five-fold participant-blocked cross-validation, where whole participants, not individual time points, were held out. Temporally adjacent samples were thinned to reduce the influence of autocorrelation. A one-standard-error rule was used to identify a parsimonious near-optimal model from the cross-validation curve (Hastie et al., 2009). A heavy-tailed single-component Student-$t$ distribution was also included as an elliptical baseline. The correspondence between mixture components and the seven k-means states was quantified using adjusted Rand index, normalized mutual information, and cluster purity.
+Gaussian mixture models used diagonal covariance matrices, five expectation-maximization restarts, a maximum of 1,000 iterations, and regularization values $\{10^{-6},10^{-5},10^{-4},10^{-3}\}$ (McLachlan \& Peel, 2000). The candidate grid was $K=\{1,\ldots,10,12,15,20,30,40,50,60\}$. Observations were temporally thinned with stride 7, and fitting used up to 30,000 training and 30,000 test observations. The random-number seed was 42.
 
-The criteria did not converge on seven components (Table~\ref{tab:gmm_density_complexity}). The Bayesian information criterion was minimized at nine components. Subject-blocked cross-validation reached its minimum mean NLL at $K=50$. The maximum tested complexity was $K=60$, which was not the optimum. The one-standard-error rule indicated fifteen components as the most parsimonious near-optimal choice. A single Gaussian was clearly inadequate, but the correspondence between the Gaussian mixture components and the seven-state atlas was weak. For the seven-component mixture model, the adjusted Rand index against the seven k-means states was 0.06, and correspondence did not strengthen at higher component counts. These results indicate that the state-space density is complex and non-elliptical, but they do not identify a single optimal number of discrete states. The seven-state atlas is therefore retained as a pre-specified working description, not as a density-derived optimum.
+Model complexity was evaluated using the Bayesian information criterion and out-of-sample likelihood (Schwarz, 1978). The principal estimate used one five-fold participant-blocked cross-validation, with whole participants held out, and a one-standard-error rule for a parsimonious near-optimal model (Hastie et al., 2009). A separate initial split used 127 training and 55 held-out participants. A heavy-tailed single-component Student-$t$ distribution was included as an elliptical baseline. Component-alignment uncertainty used 1,000 participant bootstraps. Correspondence with the seven k-means states was summarized by adjusted Rand index, normalized mutual information, and cluster purity.
+
+The criteria did not converge on seven components (Table~\ref{tab:gmm_density_complexity}). The Bayesian information criterion was minimized at nine components. Mean participant-CV NLL was minimized at $K=50$; $K=60$ was tested but was not optimal. The participant-CV one-standard-error rule selected $K=15$. The separate 127/55 split selected $K=59$ by minimum NLL and $K=3$ by its one-standard-error rule. The primary summary uses the more stable participant-CV values, $K=50$ and $K=15$. A single Gaussian was inadequate, and the seven-component mixture had adjusted Rand index 0.06 against the seven-state atlas. These results show a complex, non-elliptical density but no unique discrete state count; the seven-state atlas remains a pre-specified working description.
 
 \begin{table}[H]
 \centering
@@ -242,7 +247,7 @@ P_{ij}
 \end{equation}
 The entries of $P$ are the transition probabilities used by the models in Section 2.2.
 
-Four normalized entropy measures were computed using Shannon entropy (Shannon, 1948). Occupancy entropy, $H_1$, was defined as the entropy of the participant's state occupancy distribution. Transition entropy, $H_2$, was defined as the occupancy-weighted mean of the row entropies of the transition matrix:
+Four entropy measures were computed in bits using Shannon entropy, together with normalized versions used in the entropy-behaviour analysis (Shannon, 1948). Occupancy entropy, $H_1$, was the entropy of the participant's state-occupancy distribution. Transition entropy, $H_2$, was the origin-weighted mean of the transition-row entropies:
 \begin{equation}
 H_2
 =
@@ -254,7 +259,21 @@ w_i
 P_{ij}\log_2 P_{ij}
 \right),
 \end{equation}
-where $w_i$ is the relative frequency with which state $i$ served as the origin of a transition. $H_2$ was also recomputed after removing self-transitions. Two off-diagonal versions were used. The first, $H_{2,\mathrm{off}}$, used the same origin weights $w_i$ as the full transition entropy but computed row entropy after setting self-transitions to zero and renormalizing each row. The second, $H_{2,\mathrm{switch}}$, used origin weights based only on outgoing switches. This switch-weighted version quantified the diversity of destinations conditional on a switch having occurred. Together with $H_1$ and $H_2$, these gave the four normalized entropy measures used in the entropy-cognition analysis.
+where
+\begin{equation}
+w_i=\frac{\sum_j C_{ij}}{\sum_{k,l}C_{kl}}
+\end{equation}
+is the relative frequency with which state $i$ served as a transition origin. $H_2$ was also recomputed after removing self-transitions. The first off-diagonal version, $H_{2,\mathrm{off}}$, used the original $w_i$ but set self-transitions to zero and renormalized each row. The second, $H_{2,\mathrm{switch}}$, weighted rows by their outgoing-switch frequencies and therefore described destinations conditional on a switch. The normalized variables were
+\begin{equation}
+H_{1,\mathrm{norm}}=\frac{H_1}{\log_2 7},
+\qquad
+H_{2,\mathrm{norm}}=\frac{H_2}{\log_2 7},
+\end{equation}
+\begin{equation}
+H_{2,\mathrm{off,norm}}=\frac{H_{2,\mathrm{off}}}{\log_2 6},
+\qquad
+H_{2,\mathrm{switch,norm}}=\frac{H_{2,\mathrm{switch}}}{\log_2 6}.
+\end{equation}
 
 Finally, spatial and temporal heterogeneity of local synchronization were summarized from $R(c,t)$. Spatial heterogeneity, $T_1$, was defined as the time-averaged dispersion of local synchronization across parcels. Temporal heterogeneity, $T_2$, was defined as the parcel-averaged dispersion of local synchronization across time:
 \begin{equation}
@@ -271,6 +290,7 @@ T_2
 \sum_{c=1}^{N}
 \operatorname{std}_t R(c,t).
 \end{equation}
+Both equations used MATLAB's sample standard deviation, normalized by $n-1$. A third QC measure, $T_3$, was the participant's mean Euclidean distance between each observation and its assigned state centroid in the 50-dimensional PCA space. $T_3$ was used when identifying statistical extremes.
 
 % \begin{table}[htbp]
 % \centering
@@ -309,6 +329,7 @@ Transition entropy & $H_2$ & Origin-weighted mean transition-row entropy \\
 Off-diagonal transition entropy & $H_{2,\mathrm{off}}$ & Transition entropy after excluding self-transitions, using original origin weights \\
 Switch-weighted transition entropy & $H_{2,\mathrm{switch}}$ & Transition entropy after excluding self-transitions, using switch-origin weights \\
 Synchronization heterogeneity & $T_1, T_2$ & Spatial and temporal dispersion of local synchronization \\
+Centroid dispersion & $T_3$ & Mean observation-to-assigned-centroid distance in PCA space \\
 Global synchrony and metastability & $S, M$ & Temporal mean and temporal standard deviation of the global order parameter \\
 \bottomrule
 \end{tabular}
@@ -319,13 +340,32 @@ Two measures require careful interpretation. $T_1$ and $T_2$ describe spatial an
 
 \subsection{Quality control}
 
-No participant was excluded on data-quality grounds. Motion and nuisance records were not available alongside the parcel time series, so acquisition-level quality control could not be repeated in the present analysis. Thirty-two participants showed statistical phenotype extremes, including 12 severe statistical extremes. None was an independently identified acquisition-quality failure. These participants were retained in the main analysis and used in sensitivity analyses. One participant was also designated as the primary single-case sensitivity check. Each run of the analysis was stored with a timestamp, a checksum manifest of its outputs, and a record of the computing environment, allowing the results to be reproduced exactly.
+Two distinct flag systems were retained. Independent QC flags represented unexpected missing fine parcels, interpolated samples, zero-filled fine parcels, or non-finite raw or preprocessed data. No participant had an independent QC flag. These checks could not substitute for motion or acquisition QC because the necessary records were unavailable.
+
+Statistical phenotype extremes were defined by an absolute conventional $z\geq3$ or robust $z\geq3$, maximum state occupancy $\geq0.35$, or normalized $H_1\leq0.75$. Severe statistical extremes used absolute conventional or robust $z\geq4$, maximum state occupancy $\geq0.50$, or normalized $H_1\leq0.50$. There were 32 statistical extremes, including 12 severe extremes; none was an independently identified acquisition-quality failure. HCP subject 169444 was the designated single-case sensitivity participant.
+
+Sensitivity scope differed by analysis. Geometry evaluated exclusions of the 12 severe and 32 total statistical extremes. The current entropy pipeline compared the complete sample, independent-QC exclusions, and exclusion of subject 169444, but not the statistical-extreme groups. Dwell and MOP outputs primarily used independent-QC exclusions, which removed nobody. Statistical extremes were retained in the main analyses.
 
 \subsection{Behavioural measures}
 
 Cognitive performance was measured using cognitive variables from the HCP behavioural battery. The HCP behavioural battery was designed to measure individual differences in cognitive, emotional, sensory, and motor function (Barch et al., 2013). The cognitive variables used here were drawn from the NIH Toolbox cognition battery and Penn computerized neurocognitive tests, which assess domains such as fluid reasoning, processing speed, cognitive flexibility, working memory, inhibitory control, and vocabulary knowledge (Weintraub et al., 2013; Gur et al., 2010).
 
-A general cognitive factor, $g$, was estimated using one-factor maximum-likelihood factor analysis. Each standardized cognitive score was modelled as a loading on a single common factor plus a test-specific residual. The estimated factor score was used as the participant's general cognitive score. This follows the classical idea that positive correlations across cognitive tests can be summarized by a general cognitive factor (Spearman, 1904). Participants with missing entries in the cognitive variables used for this factor model were excluded from the estimation of $g$.
+A general cognitive factor, $g$, used ten indicators:
+{\centering
+\scriptsize
+\begin{tabular}{@{}lll@{}}
+\texttt{PMAT24\_A\_CR} & \texttt{ProcSpeed\_Unadj} & \texttt{CardSort\_Unadj} \\
+\texttt{ListSort\_Unadj} & \texttt{Flanker\_Unadj} & \texttt{VSPLOT\_TC} \\
+\texttt{IWRD\_TOT} & \texttt{PicSeq\_Unadj} & \texttt{ReadEng\_Unadj} \\
+\texttt{PicVocab\_Unadj} & &
+\end{tabular}
+\par}
+Indicators were z-scored across complete cases. MATLAB \texttt{factoran} fitted a one-factor
+model by maximum likelihood. Its sign was oriented to correlate positively with the mean
+standardized test score. One participant had incomplete
+data, giving $N=181$ for $g$ (Spearman, 1904).
+
+Outcome families were analysis-specific. Entropy analyses used $g$, Penn Matrix Reasoning (PMAT), Processing Speed, Card Sort, List Sort, Flanker, and Picture Vocabulary. Geometry used $g$ plus all ten component indicators listed above. Multivariate transition mapping used five outcomes: List Sort, PMAT, $g$, Flanker, and Card Sort.
 
 \section{Inferential and modelling analyses}
 
@@ -333,12 +373,11 @@ This section describes the inferential and modelling analyses applied to the par
 
 \subsection{Statistical inference framework}
 
-All analyses used participants as the unit of inference. Null distributions were therefore
-constructed by permuting or resampling participants, behavioural labels, or participant-level
-summary statistics, rather than treating individual volumes or transitions as independent
-observations. Unless stated otherwise, all analyses were conditional on the fixed seven-state
-atlas defined in Section 2.1.2. The PCA projection, cluster centroids, and state labels were not
-re-estimated inside each test or cross-validation fold.
+Inference matched the analysis. Surrogate sequences permuted time points or dwell runs within
+participants; geometry enumerated assignments of state labels; cognition tests permuted behavioural
+labels across participants; and model comparisons used paired participant-level differences.
+Participant bootstrap and sign-flip tests treated participants as the resampling units. Unless
+stated otherwise, analyses were conditional on the fixed full-sample atlas in Section 2.1.2.
 
 Generative transition models were evaluated using participant-level leave-one-out cross-validation.
 In each fold, model parameters were estimated from all participants except one and tested on
@@ -372,44 +411,73 @@ cross-validated correlations and coefficients of determination therefore quantif
 accuracy conditional on the full-sample feature mask. They should not be interpreted as fully
 unbiased estimates of prediction accuracy for new participants.
 
-Model comparisons used paired participant-level tests. For each participant, the difference
-between two models was computed on the relevant fit metric and oriented so that positive values
-favoured the model of interest. Significance was assessed using a sign-flip permutation test,
-following the logic of non-parametric permutation inference in neuroimaging (Nichols \&
-Holmes, 2002). Monte Carlo \(p\)-values used an add-one correction so that \(p\)-values could not
-be zero when permutations were randomly sampled (Phipson \& Smyth, 2010). Group effects
-were reported with 95\% bootstrap confidence intervals (Efron \& Tibshirani, 1993). Families
-of related tests were controlled using the Benjamini-Hochberg false-discovery-rate procedure
-(Benjamini \& Hochberg, 1995). Sensitivity analyses repeated the main tests after applying the
-statistical-extreme exclusions and single-participant leave-out analysis described in Section 2.1.4.
+Model comparisons used paired participant-level differences, oriented so positive values
+favoured the named model except where an observed-minus-null entropy contrast was explicitly
+defined. Randomly sampled Monte Carlo tests used the add-one correction (Phipson \& Smyth,
+2010), and group effects used participant bootstrap confidence intervals (Efron \& Tibshirani,
+1993). The exact geometry relabelling test was exhaustive and used the exact exceedance
+proportion without an add-one correction.
+
+Benjamini--Hochberg correction was applied separately to the following families: the four
+population surrogate tests; participant-level surrogate tests across 182 participants within
+each null/entropy combination; the 28 entropy-behaviour tests separately for Pearson,
+permutation, and Spearman inference; the 11 geometry-cognition off-diagonal associations and
+11 diagonal associations; the reported dwell-model metrics; the binary-MOP dispersion-versus-
+pure metrics; and, separately, the stay-gate and conditional-switch MOP comparison metrics
+(Benjamini \& Hochberg, 1995).
+
+HCP family identifiers were unavailable. Ordinary participant-label permutations, sign-flip
+tests, participant bootstraps, and subject-wise cross-validation therefore did not preserve family
+exchangeability and should be interpreted with that limitation. Sensitivity analyses were also
+pipeline-specific: geometry used statistical extreme exclusions; entropy used independent QC
+and subject-169444 checks; dwell and MOP used independent QC samples that were identical to
+the complete sample.
 
 
 
 \subsection{Surrogate-null testing of transition structure}
 
-A surrogate-data analysis tested whether the observed state sequences were more temporally structured than expected from simple properties of each participant's sequence. Surrogate testing provides a way to compare an observed time series against synthetic sequences that preserve selected properties of the data while destroying others (Theiler et al., 1992). The main test statistic was transition entropy, $H_2$, defined in Section 2.1.3. Lower transition entropy indicates more predictable transitions, whereas higher transition entropy indicates more diffuse transition patterns.
+A surrogate-data analysis tested whether observed state sequences were more temporally structured than synthetic sequences preserving selected properties (Theiler et al., 1992). The surrogate script calculated row entropies as in Section 2.1.3 but weighted them by volume occupancy, including the final volume, rather than canonical transition-origin frequency. These definitions differ slightly; surrogate $H_2$ values should therefore not be numerically equated with the canonical origin-weighted $H_2$ reported elsewhere.
 
 Two surrogate null models were used. The first was an occupancy-preserving null. For each participant, the state labels were randomly permuted in time. This preserved the number of volumes and the total occupancy of each state, but destroyed temporal order, dwell durations, and transition dependencies.
 
-The second was a dwell-preserving null. For each participant, the sequence was decomposed into runs of consecutive identical states. The order of these runs was then randomly permuted while keeping their lengths fixed. This preserved both state occupancy and the dwell-time distribution. Departures from this null therefore indicate sequential structure beyond simple persistence. When possible, the permutation avoided placing two runs of the same state next to each other, since this would merge runs and change the dwell-time distribution.
+The second was a dwell-preserving null. Each sequence was decomposed into runs of consecutive identical states. Run order was generated with a randomized greedy multiset algorithm that prevented adjacent runs of the same state when mathematically possible, with up to 200 attempts. The final analysis had no failures and introduced no same-state boundaries. This preserved occupancy and dwell lengths while disrupting run order.
 
-For each participant and each null model, 5,000 surrogate sequences were generated. Transition entropy was recomputed for every surrogate sequence. Surrogates were evaluated both at the participant level and at the group level, where one surrogate sequence per participant was pooled to form a group transition matrix.
+For each participant and null, 5,000 surrogate sequences were generated using random seed 42. Surrogates were evaluated at participant level and in a pooled group analysis. Confidence intervals used 10,000 participant bootstraps, and population tests used 100,000 sign-flip permutations.
 
 For each participant, the effect was summarized as the difference between the observed $H_2$ and the mean surrogate $H_2$. This difference was also standardized by the surrogate standard deviation to obtain a $z$-score. A negative observed-minus-surrogate difference means that the real sequence had lower transition entropy than expected under the null, and therefore stronger temporal structure. One-sided and two-sided $p$-values were read directly from the surrogate distribution with the add-one correction.
 
-Population-level inference used the sign-flip procedure described in Section 2.2.1 on the participant-level observed-minus-surrogate differences. The test was oriented so that positive values indicated stronger temporal structure than the null. Bootstrap confidence intervals were computed for the mean effect, and false-discovery-rate correction was applied across the planned family of entropy tests. This family included full transition entropy and self-transition-free entropy under both the occupancy-preserving and dwell-preserving nulls.
+The saved contrast was
+\begin{equation}
+\Delta H_2=H_{2,\mathrm{observed}}-\overline{H}_{2,\mathrm{null}}.
+\end{equation}
+Lower-tail sign-flip tests assessed whether the mean observed-minus-null difference was below zero. Participant-specific surrogate $p$-values were BH-corrected across 182 participants within each test. Population sign-flip $p$-values were BH-corrected across four planned tests: full and off-diagonal entropy under occupancy- and dwell-preserving nulls.
 
 As a supplementary analysis, the same surrogate tests were repeated after removing self-transitions. This separated structure in the choice of switch destination from structure caused by persistence in the same state. This analysis is motivated by previous evidence that resting brain-state sequences are not random and can show hierarchical temporal organization (Vidaurre et al., 2017).
 
 \subsection{Entropy-cognition associations}
 
-The association between transition dynamics and cognition was tested at the participant level. Four normalized entropy measures from Section 2.1.3 were related to seven cognitive outcomes: the general cognitive factor $g$ and six individual cognitive scores. This produced 28 planned measure-outcome pairs.
+The four normalized variables $H_{1,\mathrm{norm}}$, $H_{2,\mathrm{norm}}$,
+$H_{2,\mathrm{off,norm}}$, and $H_{2,\mathrm{switch,norm}}$ were correlated with seven
+outcomes: $g$, PMAT, Processing Speed, Card Sort, List Sort, Flanker, and Picture Vocabulary.
+This produced 28 planned pairs.
 
-For each pair, the primary association measure was the Pearson correlation. A Spearman rank correlation was also computed as a robustness check for monotonic but non-linear associations. Statistical significance was assessed using a label-shuffle permutation null. In each permutation, cognitive scores were randomly reassigned across participants, and the correlation was recomputed. The two-sided $p$-value was the add-one-corrected proportion of permutations whose absolute correlation was at least as large as the observed absolute correlation.
+For each pair, Pearson correlation was primary and Spearman correlation was a rank-based check.
+Inference used 100,000 participant-label permutations per pair, 10,000 bootstrap resamples, and
+random seed 42. Two-sided permutation $p$-values used the add-one correction. BH correction
+was applied separately across all 28 parametric Pearson, permutation, and Spearman tests.
+The canonical entropy-cognition analysis did not adjust for age or sex, although those variables
+were present in the behavioural table.
 
-Each association was reported with a 95\% bootstrap confidence interval. A leave-one-participant-out influence analysis was also performed by recomputing each correlation after removing one participant at a time. False-discovery-rate correction was applied separately within the Pearson, permutation, and Spearman families.
+Each association was reported with a 95\% bootstrap confidence interval. A leave-one-participant-out influence analysis recomputed each correlation after removing one participant at a time.
 
-Two robustness analyses were performed. First, each association was recomputed using the quality-control and single-participant sensitivity samples described in Sections 2.1.4 and 2.2.1. Second, partial correlations were used to test whether the entropy-cognition associations remained after accounting for related dynamic measures. Entropy and cognitive scores were residualized with respect to standardized covariates, including global synchrony and metastability, switch rate and maximum occupancy, and the full set of these covariates together. Significance was assessed using the standard $t$-test for partial correlations with $n-k-2$ degrees of freedom, where $k$ is the number of covariates. False-discovery-rate correction was applied within each sample and covariate set.
+Sensitivity samples were the complete sample, exclusion of severe independent-QC flags,
+exclusion of any independent-QC flags, and exclusion of subject 169444. Because no independent
+QC flags occurred, the first three samples were identical; this script did not exclude the 12 or
+32 statistical-extreme groups. Contextual partial correlations residualized entropy and cognition
+with respect to global synchrony and metastability, switch rate and maximum state occupancy,
+and all four measures together. Significance used the standard partial-correlation $t$-test with
+$n-k-2$ degrees of freedom and BH correction within each sample and covariate set.
 
 \subsection{Graded-geometry model of transitions}
 
@@ -428,15 +496,15 @@ Transition probability was then modelled as an exponential decay of distance:
 {\sum_{k=1}^{K}\exp(-D_{ik}/\tau)} .
 \end{equation}
 
-Here, $\tau$ is the only free parameter and controls the spatial scale of the transition rule. Small $\tau$ values make transitions strongly local, favouring nearby states, whereas larger $\tau$ values make the predicted transition distribution more diffuse. $\tau$ was selected over a fixed logarithmic grid scaled to the mean centroid distance, by maximizing the Pearson correlation between predicted and empirical off-diagonal transition probabilities.
+Here, $\tau$ is the only free parameter and controls the spatial scale of the transition rule. Forty logarithmically spaced values from 0.01 to 100 times the mean off-diagonal centroid distance were evaluated. Selection maximized the Pearson correlation between predicted and empirical off-diagonal probabilities.
 
-The model was first fit to the pooled group transition matrix and evaluated using the metrics described in Section 2.2.1. The confirmatory test used an exact state-label permutation null. The seven centroids were reassigned to the empirical state labels for all $7! = 5{,}040$ possible relabellings, and $\tau$ was refit for each relabelling. The observed off-diagonal fit was then compared with this exact null distribution, giving an upper-tail permutation $p$-value. This follows the logic of non-parametric permutation inference, where significance is assessed by comparing the observed statistic with the distribution obtained under valid relabellings of the data (Nichols \& Holmes, 2002; Winkler et al., 2014).
+The model was first fit to the pooled group transition matrix. The confirmatory test reassigned the seven centroids to empirical state labels for all $7!=5{,}040$ possible mappings and refit $\tau$ for each. Because the null was exhaustive, its upper-tail $p$-value was the exact exceedance proportion without a Monte Carlo add-one correction. This test assesses correspondence between the seven empirical labels and centroid geometry; it is not participant-population inference and remains conditional on the full-sample PCA and centroids (Nichols \& Holmes, 2002; Winkler et al., 2014).
 
 Generalization was assessed using leave-one-participant-out cross-validation. In each fold, $\tau$ was retuned on the training participants over the same fixed grid, independently of the full-sample optimum. The resulting transition matrix was then scored against the held-out participant. Because the centroids and state labels were fixed in advance, this procedure tested generalization of the distance law conditional on the frozen atlas. It did not refit the PCA space, cluster centroids, or state labels within each fold.
 
-Ideally, permutation inference and cross-validation in the HCP dataset would use family-clustered resampling to preserve exchangeability structure among genetically related participants (Winkler et al., 2014). Because family identifiers were unavailable for our specific sample, held-out participant correlations are reported descriptively, and the exact state-label permutation null is treated as the primary confirmatory test. Permutation $p$-values used the standard non-zero correction when based on sampled rather than exhaustive permutations (Phipson \& Smyth, 2010), and families of related tests were corrected using the Benjamini-Hochberg false-discovery-rate procedure (Benjamini \& Hochberg, 1995).
+Because family identifiers were unavailable, held-out participant correlations are reported descriptively and the exact state-label null is the primary confirmatory test.
 
-As an exploratory behavioural analysis, each participant's held-out off-diagonal and diagonal model fits were related to the cognitive outcomes described in Section 2.1.5. These associations were tested using partial correlations controlling for age and sex, with false-discovery-rate correction across cognitive targets. The diagonal fit was interpreted cautiously, because the distance-law model does not include a separate persistence term. Therefore, diagonal performance cannot be taken as evidence that geometry explains dwell time.
+Exploratory behavioural analyses related held-out fits to 11 outcomes: $g$ plus the ten component indicators in Section 2.1.5. Partial correlations controlled for Age and \texttt{GenderMale}. BH correction was applied separately across the 11 off-diagonal and 11 diagonal associations. Diagonal fit was interpreted cautiously because the distance law has no separate persistence term.
 
 \subsection{Persistence, or dwell-bias, null models}
 
@@ -465,7 +533,9 @@ The model placed a specified amount of probability on self-transitions and sprea
 
 Two versions were compared. In the empirical-stay model, $q_i$ was the training self-transition probability for state $i$. In the global-stay model, $q_i$ was replaced by a single pooled self-transition probability shared by all states. The two models therefore differed only in whether persistence was state-specific. Neither model used geometric distance to route switches.
 
-Both models were evaluated in the full sample and using leave-one-participant-out cross-validation. In each fold, the transition support and stay probabilities were estimated from the training participants only. Models were scored using negative log-likelihood, predicted-versus-empirical correlation for all entries, diagonal entries, and off-diagonal entries, as well as error measures. A paired sign-flip test compared the empirical-stay model against the global-stay model. An improvement restricted to the diagonal or the stay-switch split would indicate that the gain came from state-specific persistence rather than from improved off-diagonal routing.
+Both models were evaluated in the full sample and using leave-one-participant-out cross-validation. In each fold, transition support and stay probabilities were estimated from training participants only. Probabilities were floored at $10^{-12}$. Models were scored using NLL, predicted-versus-empirical correlations, and error measures. When support was saturated, the global-stay model predicted a constant diagonal and uniform switch probabilities; the corresponding Pearson correlations were therefore undefined rather than zero.
+
+Inference used random seed 42, 10,000 participant bootstraps, and 10,000 paired sign-flip permutations. BH correction covered the reported dwell comparison metrics. Independent QC sensitivity exclusions removed nobody. The current dwell pipeline did not provide separate exclusions of the 12 severe or 32 total statistical extremes.
 
 % \subsection{Multivariate explanatory mapping of transition features to cognition}
 
@@ -476,8 +546,7 @@ Both models were evaluated in the full sample and using leave-one-participant-ou
 
 The multivariate analyses tested whether individual transition matrices contained structured information related to cognition. This follows the broader logic of connectome-based predictive modelling, where brain connectivity features are related to individual behavioural differences under cross-validation (Shen et al., 2017). In the present thesis, however, this modelling phase was used primarily as an explanatory analysis. The aim was to assess whether transition features carried a reliable cognitive signal and to identify the transition entries most associated with cognitive differences, rather than to estimate unbiased out-of-sample biomarker performance.
 
-For each participant, the $7 \times 7$ transition matrix was flattened into a 49-dimensional feature vector. Five cognitive targets were modelled: List Sorting, Penn Matrix Reasoning, Flanker, Dimensional Change Card Sort, and the general cognitive factor $g$. 
-Because the primary goal was feature-level inference, an outcome-specific feature mask was estimated on the full sample. For each cognitive target, transition-cognition correlations were computed across all valid participants, and a correlation threshold was selected from a candidate range by cross-validation. Transition entries whose absolute correlation exceeded the selected threshold were retained as the target-specific feature mask. The retained features were then entered into a ridge-dominant elastic net model (Zou \& Hastie, 2005). The model coefficients $\boldsymbol{\beta}$ minimized
+For each participant, the $7 \times 7$ transition matrix was flattened into 49 features. Five targets were modelled: List Sort, PMAT, $g$, Flanker, and Card Sort. An outcome-specific mask was estimated from full-sample outcome correlations. The threshold grid began at 0.08 and increased in steps of 0.01; each threshold was assessed using five repeated 10-fold cross-validation evaluations. The selected full-sample mask was then reused in every outer fold. Retained features entered a ridge-dominant elastic net (Zou \& Hastie, 2005), whose coefficients minimized
 \begin{equation}
 \frac{1}{2n}
 \sum_{i=1}^{n}
@@ -492,12 +561,12 @@ Because the primary goal was feature-level inference, an outcome-specific featur
 \right].
 \end{equation}
 
-The mixing parameter was fixed at $\alpha = 0.01$, making the model ridge-dominant while still allowing weak sparsity. In the current ridge implementation, predictors and outcomes were globally standardized before outer cross-validation. Model fitting and penalty selection occurred inside training folds. The analysis is therefore conditional and not fully fold-local. Model performance was evaluated using 100 repeats of 10-fold cross-validation. The reported cross-validated correlation and coefficient of determination therefore describe how well the regularized model explains cognitive variation conditional on the full-sample feature mask. They should not be interpreted as fully unbiased estimates of external predictive performance.
+The mixing parameter was $\alpha=0.01$. Predictors and outcomes were globally z-scored before outer cross-validation. The observed models used 100 repeated subject-wise 10-fold outer runs and 10-fold inner cross-validation for penalty selection. Model fitting and penalty selection occurred inside training folds, but standardization and feature discovery did not. The analysis is therefore conditional on the globally standardized data and full-sample mask, not fully fold-local or family-wise.
 
 
-Statistical significance was tested using a label-shuffle null. In each permutation, cognitive scores were shuffled across participants while the outcome-specific feature mask was kept fixed. The regularized model fitting procedure was then repeated on the permuted labels using the same cross-validation structure. This provided an empirical baseline for the apparent accuracy expected from the same fixed explanatory feature set when behavioural labels carried no meaningful relationship to the transition features.
+The label-shuffle analysis used 500 permutations. During each permutation the real-label-derived mask was held fixed, outer folds were subject-wise, and penalty selection used five-fold inner cross-validation. The null therefore did not repeat feature discovery and cannot validate selection of predictors for unseen outcomes. In the latest saved ridge output, \texttt{pFDR} corrected parametric correlation $p$-values, not permutation $p$-values; no permutation-FDR values are reported. The ridge script did not set a random-number seed before constructing partitions, so the saved rerun is not exactly reproducible. A fixed seed and fresh rerun would be required for exact numerical reproduction.
 
-Three nonlinear regressors were compared with the elastic net using the same cross-validation splits and the same feature-screening strategy: support vector regression with a Gaussian kernel (Drucker et al., 1997), random forests (Breiman, 2001), and gradient-boosted regression trees (Friedman, 2001). The preceding nonlinear comparison used the Nadeau--Bengio corrected resampled $t$-test as its primary paired comparison. That comparison has not yet been rerun using the latest transition-feature results.
+A preceding provisional nonlinear comparison used the saved full-sample masks and global standardization for support vector regression with a Gaussian kernel, random forests, and gradient-boosted trees (Drucker et al., 1997; Breiman, 2001; Friedman, 2001). Its primary paired comparison was the Nadeau--Bengio corrected resampled $t$-test. Because it has not been rerun after the latest state, feature, and ridge update, no current nonlinear result is reported.
 
 \subsection{Maximum occupancy principle models of transitions}
 
@@ -512,6 +581,7 @@ V_i
 M_{ij}
 \exp(-\lambda c_j + \gamma V_j).
 \end{equation}
+Here $\log$ is the natural logarithm used by the log-sum-exp recursion; the base-2 convention applies only to entropy measures.
 
 The corresponding predicted transition probabilities were
 \begin{equation}
@@ -526,7 +596,7 @@ M_{ik}\exp(-\lambda c_k + \gamma V_k)
 }.
 \end{equation}
 
-Here, $\gamma=0.99$ is the discount factor and $\lambda\geq 0$ controls the strength of the destination cost. The cost $c_j$ was defined as the within-state dispersion of destination state $j$:
+Here, $\gamma=0.99$ is the discount factor and $\lambda\geq 0$ controls the destination cost. The grid was $\lambda\in\{0\}\cup\mathrm{logspace}(-3,1,25)$. Value iteration used tolerance $10^{-6}$, at most 10,000 iterations, probability floor $10^{-12}$, and random seed 42. The cost $c_j$ was the within-state dispersion of destination state $j$:
 \begin{equation}
 c_j
 =
@@ -534,7 +604,7 @@ c_j
 \sum_{t:q_t=j}
 \left\lVert \mathbf{x}_t-\boldsymbol{\mu}_j \right\rVert,
 \end{equation}
-where $\mathbf{x}_t$ is the 50-dimensional PCA representation of time point $t$, $\boldsymbol{\mu}_j$ is the centroid of state $j$, and $n_j$ is the number of time points assigned to state $j$. Compact states therefore had lower cost, whereas more dispersed states had higher cost. Only destination costs were included, because a source-specific cost would be constant within a row and would cancel during row normalization. Pure topology-only MOP models set $\lambda=0$.
+where $\mathbf{x}_t$ is the 50-dimensional PCA representation, $\boldsymbol{\mu}_j$ is the centroid of state $j$, and $n_j$ is its number of observations. This is a within-state geometric quantity: it differs from the inter-centroid distance used by the graded-geometry model but is not purely non-geometric. Compact states had lower cost. Only destination costs were included because a source-specific cost cancels during row normalization. Pure topology models set $\lambda=0$.
 
 Two model families were tested. The first family modelled the full transition row, including self-transitions. The PureBinaryMOP model used only the transition support and the recursive value term. The DispersionDestinationMOP model added the destination dispersion cost $c_j$.
 
@@ -592,16 +662,16 @@ EmpiricalStay
 \end{tabularx}
 \end{table}
 
-The cost weight $\lambda$ was selected from a non-negative grid, while $\gamma$ was fixed at 0.99. All MOP models were evaluated both in the full sample and using leave-one-participant-out cross-validation. In cross-validation, the support matrix, stay probabilities, destination costs, and tuned parameters were estimated from the training participants only and then evaluated on the held-out participant.
+Full-row binary MOP selected $\lambda$ by minimizing training full-transition NLL. Switch-only MOP selected $\lambda$ by minimizing training conditional-switch NLL. Models were evaluated in the full sample and leave-one-participant-out cross-validation. Within each fold, support, stay probabilities, dispersion costs, and tuned parameters used training participants only. Held-out participants were excluded when calculating dispersion costs, but distances were measured around centroids learned from the complete sample; MOP validation was therefore conditional on frozen full-sample centroids.
 
-Models were scored using negative log-likelihood, predicted-versus-empirical correlations for all entries, diagonal entries, and off-diagonal entries, mean absolute error, root-mean-square error, and the absolute error in transition entropy. Planned comparisons tested whether adding destination dispersion improved prediction over the pure binary MOP model, and whether state-specific persistence improved prediction over the global-stay baseline. These comparisons used the paired sign-flip test, bootstrap confidence intervals, and false-discovery-rate correction described in Section 2.2.1.
+Models were scored using NLL; all-entry, diagonal, and off-diagonal correlations; MAE; RMSE; and absolute transition-entropy error. Inference used 10,000 participant bootstraps and 10,000 paired sign-flip permutations. BH correction was applied separately to (i) binary full-row dispersion-versus-pure metrics, (ii) empirical-versus-global stay-gate metrics, and (iii) switch-only dispersion-versus-pure metrics. Constant predictions could make baseline Pearson correlations undefined.
 
 
 \chapter{Results and Data Analyses}
 
 The results are presented in the same order as the methods. First, I describe the seven-state synchronization atlas and the participant-level dynamic measures. I then test whether the observed transition sequences contain temporal structure beyond state occupancy and dwell time. Next, I compare generative models of the transition matrix, including geometry, persistence, and maximum occupancy principle models. Finally, I examine whether transition dynamics relate to cognitive performance.
 
-All analyses used the inferential framework described in Section 2.2.1, with participants as the unit of inference. The final sample included $n=182$ participants. Figures are reported in Appendix A and are cited in the text by appendix number. Tables are included in the main text.
+Analyses used the analysis-specific inferential framework in Section 2.2.1. Participant-level analyses included up to $n=182$ participants, with $N=181$ for $g$. Figures are reported in Appendix A and tables in the main text.
 
 \section{State atlas and dynamic measures}
 
@@ -631,7 +701,7 @@ Across participants, the main dynamic measures were stable in scale. Occupancy e
 
 The seven-state solution should be interpreted as a working partition of a continuous synchronization space, not as evidence for seven sharply separated clusters. Average silhouette width was low across clustering solutions and was highest at $K=2$, with a value of 0.107 compared with 0.025 at $K=7$. However, the seven-state solution was reasonably reproducible. Repeated re-clustering of resampled time points produced a mean adjusted Rand index of 0.82, while re-deriving the atlas from independent participant halves gave a lower but still meaningful mean adjusted Rand index of 0.64. The adjusted Rand index quantifies agreement between cluster solutions while correcting for chance agreement (Hubert \& Arabie, 1985).
 
-The control analysis confirmed the importance of removing the global synchronization level before clustering. Without this correction, the resulting atlas differed strongly from the primary atlas. State labels accounted for 25.2\% of the variance in mean local synchronization in the primary atlas, compared with 87.8\% in the uncorrected atlas. Thus, the primary atlas mainly captured spatial configuration of local synchronization rather than overall synchronization amplitude.
+The control analysis confirmed the importance of removing the global synchronization level before clustering. Without this correction, the resulting atlas differed strongly from the primary atlas. State labels accounted for 25.2\% of the variance in instantaneous mean local synchronization in the primary atlas, compared with 87.8\% in the uncorrected atlas. Thus, the primary atlas mainly captured spatial configuration of local synchronization rather than overall synchronization amplitude.
 
 \section{Distributional validation of the atlas}
 
@@ -741,7 +811,7 @@ Two caveats are important. First, the feature mask was estimated on the full sam
 
 \section{Sensitivity analyses}
 
-Sensitivity analyses were used to assess whether the main results depended on statistical extremes or covariate adjustment. Because motion and nuisance records were not available alongside the parcel time series, no participant was excluded on acquisition-quality grounds. The quality-control sample was therefore identical to the full sample, and the sensitivity analyses focused on the removal of outcome-derived statistical extremes.
+Sensitivity analyses were pipeline-specific. No participant was excluded on acquisition-quality grounds because the necessary motion and nuisance records were unavailable, and no independent QC flag was present. Geometry evaluated the statistical extreme groups. Entropy used independent QC and subject-169444 checks plus contextual covariates. Dwell and MOP used independent QC samples identical to the complete sample.
 
 The mechanistic findings were stable across the reported geometry exclusions. The graded-geometry model showed nearly unchanged or slightly stronger off-diagonal generalization, with LOOCV correlations of $r=0.5405$ in the full sample ($N=182$), $r=0.5479$ after excluding severe statistical extremes ($N=170$), and $r=0.5555$ after excluding all statistical extremes ($N=150$). The current dwell-bias output confirms the advantage in the complete $N=182$ sample. The available independent-QC exclusion samples are identical to the complete sample because no independent QC failures were identified. A separate exclusion analysis for the 12 severe and 32 total statistical extremes is not reported by the current dwell-bias output.
 
