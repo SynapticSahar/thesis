@@ -642,44 +642,35 @@ where $\pi_{ij}$ is the MOP switch policy over destinations $j\neq i$. The stay 
 \caption{The MOP model family.}
 \label{tab:mop_model_family}
 \footnotesize
-\setstretch{1.05}
-\renewcommand{\arraystretch}{1.15}
+\setstretch{1.0}
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.08}
 \begin{tabularx}{\textwidth}{@{}
->{\raggedright\arraybackslash}p{0.34\textwidth}
+>{\raggedright\arraybackslash}p{0.33\textwidth}
+>{\raggedright\arraybackslash}p{0.14\textwidth}
 >{\raggedright\arraybackslash}X
 @{}}
 \toprule
-\textbf{Model and scope} & \textbf{Definition} \\
+\textbf{Model} & \textbf{Scope} & \textbf{Definition} \\
 \midrule
-\texttt{PureBinaryMOP}\\
-\emph{Full transition row}
-& Recursive value model over binary transition support, without a destination cost \\
-\addlinespace[4pt]
-
-\texttt{DispersionDestinationMOP}\\
-\emph{Full transition row}
-& Full-row MOP model with a destination-dispersion cost \\
-\addlinespace[4pt]
-
-\texttt{OffdiagPureMOP}\\
-\emph{Switch destinations only}
-& MOP policy over switch destinations, with self-transitions removed \\
-\addlinespace[4pt]
-
-\texttt{OffdiagDispersion}\\
-\texttt{DestinationMOP}\\
-\emph{Switch destinations only}
-& Switch-only MOP model with a destination-dispersion cost \\
-\addlinespace[4pt]
-
-\texttt{GlobalStay}\\
-\emph{Stay gate}
-& Diagonal probability set to one pooled stay probability \\
-\addlinespace[4pt]
-
-\texttt{EmpiricalStay}\\
-\emph{Stay gate}
-& Diagonal probability set to each state's empirical stay probability \\
+\texttt{PureBinaryMOP}
+& Full row
+& Binary-support recursive value model; no destination cost \\
+\makecell[l]{\texttt{DispersionDestination}\\\texttt{MOP}}
+& Full row
+& Full-row MOP with destination-dispersion cost \\
+\texttt{OffdiagPureMOP}
+& Switch only
+& MOP over switch destinations; self-transitions removed \\
+\makecell[l]{\texttt{OffdiagDispersion}\\\texttt{DestinationMOP}}
+& Switch only
+& Switch-only MOP with destination-dispersion cost \\
+\texttt{GlobalStay}
+& Stay gate
+& One pooled diagonal stay probability \\
+\texttt{EmpiricalStay}
+& Stay gate
+& State-specific empirical diagonal probabilities \\
 \bottomrule
 \end{tabularx}
 \end{table}
