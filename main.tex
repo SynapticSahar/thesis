@@ -211,7 +211,8 @@ Because the number of states was fixed by design, a separate analysis tested whe
 
 Gaussian mixture models used diagonal covariance matrices, five expectation-maximization restarts, a maximum of 1,000 iterations, and regularization values $\{10^{-6},10^{-5},10^{-4},10^{-3}\}$ (McLachlan \& Peel, 2000). The candidate grid was $K=\{1,\ldots,10,12,15,20,30,40,50,60\}$. Observations were temporally thinned with stride 7, and fitting used up to 30,000 training and 30,000 test observations. The random-number seed was 42.
 
-Model complexity was evaluated using the Bayesian information criterion and out-of-sample likelihood (Schwarz, 1978). The principal estimate used one five-fold participant-blocked cross-validation, with whole participants held out, and a one-standard-error rule for a parsimonious near-optimal model (Hastie et al., 2009). A separate initial split used 127 training and 55 held-out participants. A heavy-tailed single-component Student-$t$ distribution was included as an elliptical baseline. Component-alignment uncertainty used 1,000 participant bootstraps. Correspondence with the seven k-means states was summarized by adjusted Rand index, normalized mutual information, and cluster purity.
+Model complexity was evaluated using the Bayesian information criterion (Schwarz, 1978)
+and held-out negative log-likelihood estimated by participant-blocked cross-validation. The principal estimate used one five-fold participant-blocked cross-validation, with whole participants held out, and a one-standard-error rule for a parsimonious near-optimal model (Hastie et al., 2009). A separate initial split used 127 training and 55 held-out participants. A heavy-tailed single-component Student-$t$ distribution was included as an elliptical baseline. Component-alignment uncertainty used 1,000 participant bootstraps. Correspondence with the seven k-means states was summarized by adjusted Rand index, normalized mutual information, and cluster purity.
 
 The criteria did not converge on seven components (Table~\ref{tab:gmm_density_complexity}). The Bayesian information criterion was minimized at nine components. Mean participant-CV NLL was minimized at $K=50$; $K=60$ was tested but was not optimal. The participant-CV one-standard-error rule selected $K=15$. The separate 127/55 split selected $K=59$ by minimum NLL and $K=3$ by its one-standard-error rule. The primary summary uses the more stable participant-CV values, $K=50$ and $K=15$. A single Gaussian was inadequate, and the seven-component mixture had adjusted Rand index 0.06 against the seven-state atlas. These results show a complex, non-elliptical density but no unique discrete state count; the seven-state atlas remains a pre-specified working description.
 
@@ -225,7 +226,11 @@ The criteria did not converge on seven components (Table~\ref{tab:gmm_density_co
 \textbf{Selection criterion} & \textbf{Components} & \textbf{Interpretation} \\
 \midrule
 Penalized in-sample fit, BIC & 9 & Best training fit after a complexity penalty \\
-Out-of-sample likelihood, held-out participants & 50 & Best density on unseen participants within the tested range \\
+Out-of-sample negative log-likelihood, held-out participants
+&
+50
+&
+Lowest held-out negative log-likelihood within the tested range \\
 One-standard-error rule, held-out participants & 15 & Most parsimonious near-optimal choice \\
 Pre-specified k-means atlas & 7 & Working partition used by the generative models \\
 \bottomrule
