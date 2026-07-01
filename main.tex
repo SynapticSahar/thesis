@@ -11,8 +11,8 @@
 \usepackage{microtype}
 \usepackage{makecell}
 \usepackage{graphicx}
-\usepackage[percent]{overpic}
 \usepackage{xcolor}
+\usepackage{tikz}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage[hidelinks]{hyperref}
@@ -86,11 +86,14 @@
   \renewcommand{\arraystretch}{0.85}%
 }
 
-% Readable panel labels for composite figures.
-\newcommand{\panelletter}[1]{%
-  \begingroup\setlength{\fboxsep}{1.5pt}%
-  \colorbox{white}{\textcolor{black}{\bfseries\large #1}}%
-  \endgroup}
+% Panel labels use normalized image coordinates, independent of aspect ratio.
+\tikzset{panel label/.style={
+  anchor=north west,
+  fill=white,
+  text=black,
+  font=\bfseries\large,
+  inner sep=1.5pt
+}}
 
 
 \begin{document}
@@ -1104,10 +1107,17 @@ This appendix presents the principal graphical outputs supporting Chapter 3. The
 
 \begin{figure}[p]
 \centering
-\begin{overpic}[width=\textwidth]{figures/appendix/a01_state_atlas.png}
-\put(1,94){\panelletter{A}}\put(34,94){\panelletter{B}}\put(68,94){\panelletter{C}}
-\put(1,55){\panelletter{D}}\put(68,55){\panelletter{E}}
-\end{overpic}
+\begin{tikzpicture}
+\node[anchor=south west,inner sep=0] (image) at (0,0)
+  {\includegraphics[width=\textwidth]{figures/appendix/a01_state_atlas.png}};
+\begin{scope}[x={(image.south east)},y={(image.north west)}]
+\node[panel label] at (0.01,0.98) {A};
+\node[panel label] at (0.34,0.98) {B};
+\node[panel label] at (0.68,0.98) {C};
+\node[panel label] at (0.01,0.56) {D};
+\node[panel label] at (0.68,0.56) {E};
+\end{scope}
+\end{tikzpicture}
 \caption{\textbf{Seven-state synchronization atlas and clustering diagnostics.}
 \textbf{(A)} K-means inertia across candidate state counts.
 \textbf{(B)} Mean silhouette width across candidate counts.
@@ -1120,11 +1130,21 @@ The seven-state solution is treated as a predefined working atlas rather than an
 
 \begin{figure}[p]
 \centering
-\begin{overpic}[width=\textwidth]{figures/appendix/a02_state_dynamics.png}
-\put(1,94){\panelletter{A}}\put(34,94){\panelletter{B}}\put(67,94){\panelletter{C}}
-\put(1,62){\panelletter{D}}\put(34,62){\panelletter{E}}\put(67,62){\panelletter{F}}
-\put(1,30){\panelletter{G}}\put(34,30){\panelletter{H}}\put(67,30){\panelletter{I}}
-\end{overpic}
+\begin{tikzpicture}
+\node[anchor=south west,inner sep=0] (image) at (0,0)
+  {\includegraphics[width=\textwidth]{figures/appendix/a02_state_dynamics.png}};
+\begin{scope}[x={(image.south east)},y={(image.north west)}]
+\node[panel label] at (0.01,0.98) {A};
+\node[panel label] at (0.34,0.98) {B};
+\node[panel label] at (0.67,0.98) {C};
+\node[panel label] at (0.01,0.65) {D};
+\node[panel label] at (0.34,0.65) {E};
+\node[panel label] at (0.67,0.65) {F};
+\node[panel label] at (0.01,0.32) {G};
+\node[panel label] at (0.34,0.32) {H};
+\node[panel label] at (0.67,0.32) {I};
+\end{scope}
+\end{tikzpicture}
 \caption{\textbf{State assignments and participant-level dynamic summaries.}
 \textbf{(A--C)} Example state sequences for three participants.
 \textbf{(D)} Distance of each volume from its assigned centroid.
@@ -1138,11 +1158,21 @@ The seven-state solution is treated as a predefined working atlas rather than an
 
 \begin{figure}[p]
 \centering
-\begin{overpic}[width=\textwidth]{figures/appendix/a03_gmm_validation.png}
-\put(1,94){\panelletter{A}}\put(34,94){\panelletter{B}}\put(67,94){\panelletter{C}}
-\put(1,62){\panelletter{D}}\put(34,62){\panelletter{E}}\put(67,62){\panelletter{F}}
-\put(1,30){\panelletter{G}}\put(34,30){\panelletter{H}}\put(67,30){\panelletter{I}}
-\end{overpic}
+\begin{tikzpicture}
+\node[anchor=south west,inner sep=0] (image) at (0,0)
+  {\includegraphics[width=\textwidth]{figures/appendix/a03_gmm_validation.png}};
+\begin{scope}[x={(image.south east)},y={(image.north west)}]
+\node[panel label] at (0.01,0.98) {A};
+\node[panel label] at (0.34,0.98) {B};
+\node[panel label] at (0.67,0.98) {C};
+\node[panel label] at (0.01,0.65) {D};
+\node[panel label] at (0.34,0.65) {E};
+\node[panel label] at (0.67,0.65) {F};
+\node[panel label] at (0.01,0.32) {G};
+\node[panel label] at (0.34,0.32) {H};
+\node[panel label] at (0.67,0.32) {I};
+\end{scope}
+\end{tikzpicture}
 \caption{\textbf{Gaussian-mixture validation of the synchronization state space.}
 \textbf{(A)} BIC and AIC across candidate mixture sizes.
 \textbf{(B)} Participant-blocked out-of-sample predictive density.
@@ -1158,10 +1188,16 @@ The seven-state solution is treated as a predefined working atlas rather than an
 
 \begin{figure}[p]
 \centering
-\begin{overpic}[width=\textwidth]{figures/appendix/a04_gmm_overlap_k7.png}
-\put(1,94){\panelletter{A}}\put(51,94){\panelletter{B}}
-\put(1,48){\panelletter{C}}\put(51,48){\panelletter{D}}
-\end{overpic}
+\begin{tikzpicture}
+\node[anchor=south west,inner sep=0] (image) at (0,0)
+  {\includegraphics[width=\textwidth]{figures/appendix/a04_gmm_overlap_k7.png}};
+\begin{scope}[x={(image.south east)},y={(image.north west)}]
+\node[panel label] at (0.01,0.98) {A};
+\node[panel label] at (0.51,0.98) {B};
+\node[panel label] at (0.01,0.49) {C};
+\node[panel label] at (0.51,0.49) {D};
+\end{scope}
+\end{tikzpicture}
 \caption{\textbf{Overlap between the seven-state atlas and a seven-component Gaussian mixture.}
 \textbf{(A)} Raw state-by-component counts.
 \textbf{(B)} Row-normalized overlap.
@@ -1176,11 +1212,18 @@ The low adjusted Rand index indicates that the mixture does not recover the pred
 
 \begin{figure}[htbp]
 \centering
-\begin{overpic}[width=\textwidth]{figures/appendix/a05_surrogate_nulls.png}
-\put(1,94){\panelletter{A}}\put(51,94){\panelletter{B}}
-\put(1,62){\panelletter{C}}\put(51,62){\panelletter{D}}
-\put(1,30){\panelletter{E}}\put(51,30){\panelletter{F}}
-\end{overpic}
+\begin{tikzpicture}
+\node[anchor=south west,inner sep=0] (image) at (0,0)
+  {\includegraphics[width=\textwidth]{figures/appendix/a05_surrogate_nulls.png}};
+\begin{scope}[x={(image.south east)},y={(image.north west)}]
+\node[panel label] at (0.01,0.98) {A};
+\node[panel label] at (0.51,0.98) {B};
+\node[panel label] at (0.01,0.65) {C};
+\node[panel label] at (0.51,0.65) {D};
+\node[panel label] at (0.01,0.32) {E};
+\node[panel label] at (0.51,0.32) {F};
+\end{scope}
+\end{tikzpicture}
 \caption{\textbf{Occupancy- and dwell-preserving surrogate-null analyses.}
 \textbf{(A)} Pooled observed entropy against the occupancy-preserving null.
 \textbf{(B)} Pooled observed entropy against the dwell-preserving null.
@@ -1193,10 +1236,16 @@ The low adjusted Rand index indicates that the mixture does not recover the pred
 
 \begin{figure}[p]
 \centering
-\begin{overpic}[width=\textwidth]{figures/appendix/a06_surrogate_signflip.png}
-\put(1,94){\panelletter{A}}\put(51,94){\panelletter{B}}
-\put(1,48){\panelletter{C}}\put(51,48){\panelletter{D}}
-\end{overpic}
+\begin{tikzpicture}
+\node[anchor=south west,inner sep=0] (image) at (0,0)
+  {\includegraphics[width=\textwidth]{figures/appendix/a06_surrogate_signflip.png}};
+\begin{scope}[x={(image.south east)},y={(image.north west)}]
+\node[panel label] at (0.01,0.98) {A};
+\node[panel label] at (0.51,0.98) {B};
+\node[panel label] at (0.01,0.49) {C};
+\node[panel label] at (0.51,0.49) {D};
+\end{scope}
+\end{tikzpicture}
 \caption{\textbf{Participant-level sign-flip tests of transition-entropy differences.}
 \textbf{(A)} Full transition entropy under the occupancy-preserving null.
 \textbf{(B)} Off-diagonal entropy under the occupancy-preserving null.
@@ -1208,9 +1257,13 @@ Red lines mark observed mean differences; negative values indicate lower observe
 
 \begin{figure}[p]
 \centering
-\begin{overpic}[width=\textwidth]{figures/appendix/a07_geometry_group_fit.png}
-\put(1,94){\panelletter{A}}
-\end{overpic}
+\begin{tikzpicture}
+\node[anchor=south west,inner sep=0] (image) at (0,0)
+  {\includegraphics[width=\textwidth]{figures/appendix/a07_geometry_group_fit.png}};
+\begin{scope}[x={(image.south east)},y={(image.north west)}]
+\node[panel label] at (0.01,0.98) {A};
+\end{scope}
+\end{tikzpicture}
 \caption{\textbf{Full-sample graded-geometry fit.}
 \textbf{(A)} Model-predicted versus empirical transition probabilities, distinguishing diagonal persistence from off-diagonal switching. The exponential distance law captures off-diagonal ordering but not the self-transition pattern.}
 \label{fig:app-geometry-group}
@@ -1218,9 +1271,14 @@ Red lines mark observed mean differences; negative values indicate lower observe
 
 \begin{figure}[p]
 \centering
-\begin{overpic}[width=\textwidth]{figures/appendix/a08_geometry_loocv.png}
-\put(1,94){\panelletter{A}}\put(51,94){\panelletter{B}}
-\end{overpic}
+\begin{tikzpicture}
+\node[anchor=south west,inner sep=0] (image) at (0,0)
+  {\includegraphics[width=\textwidth]{figures/appendix/a08_geometry_loocv.png}};
+\begin{scope}[x={(image.south east)},y={(image.north west)}]
+\node[panel label] at (0.01,0.98) {A};
+\node[panel label] at (0.51,0.98) {B};
+\end{scope}
+\end{tikzpicture}
 \caption{\textbf{Held-out graded-geometry fit across participants.}
 \textbf{(A)} Leave-one-participant-out correlations for off-diagonal switch routing.
 \textbf{(B)} Corresponding correlations for diagonal persistence.
@@ -1230,9 +1288,13 @@ Off-diagonal correlations are consistently positive, whereas diagonal correlatio
 
 \begin{figure}[p]
 \centering
-\begin{overpic}[width=\textwidth]{figures/appendix/a09_geometry_cognition.png}
-\put(1,94){\panelletter{A}}
-\end{overpic}
+\begin{tikzpicture}
+\node[anchor=south west,inner sep=0] (image) at (0,0)
+  {\includegraphics[width=\textwidth]{figures/appendix/a09_geometry_cognition.png}};
+\begin{scope}[x={(image.south east)},y={(image.north west)}]
+\node[panel label] at (0.01,0.98) {A};
+\end{scope}
+\end{tikzpicture}
 \caption{\textbf{Associations between graded-geometry fit and cognition.}
 \textbf{(A)} Heatmap of age- and sex-adjusted partial Pearson correlations between participant-level held-out geometry fit and cognitive measures. Effects were weak and none survived false-discovery-rate correction.}
 \label{fig:app-geometry-cognition}
@@ -1240,11 +1302,24 @@ Off-diagonal correlations are consistently positive, whereas diagonal correlatio
 
 \begin{figure}[p]
 \centering
-\begin{overpic}[width=\textwidth]{figures/appendix/a10_dwell_bias.png}
-\put(1,94){\panelletter{A}}\put(26,94){\panelletter{B}}\put(51,94){\panelletter{C}}\put(76,94){\panelletter{D}}
-\put(1,62){\panelletter{E}}\put(26,62){\panelletter{F}}\put(51,62){\panelletter{G}}\put(76,62){\panelletter{H}}
-\put(1,30){\panelletter{I}}\put(26,30){\panelletter{J}}\put(51,30){\panelletter{K}}\put(76,30){\panelletter{L}}
-\end{overpic}
+\begin{tikzpicture}
+\node[anchor=south west,inner sep=0] (image) at (0,0)
+  {\includegraphics[width=\textwidth]{figures/appendix/a10_dwell_bias.png}};
+\begin{scope}[x={(image.south east)},y={(image.north west)}]
+\node[panel label] at (0.01,0.98) {A};
+\node[panel label] at (0.26,0.98) {B};
+\node[panel label] at (0.51,0.98) {C};
+\node[panel label] at (0.76,0.98) {D};
+\node[panel label] at (0.01,0.65) {E};
+\node[panel label] at (0.26,0.65) {F};
+\node[panel label] at (0.51,0.65) {G};
+\node[panel label] at (0.76,0.65) {H};
+\node[panel label] at (0.01,0.32) {I};
+\node[panel label] at (0.26,0.32) {J};
+\node[panel label] at (0.51,0.32) {K};
+\node[panel label] at (0.76,0.32) {L};
+\end{scope}
+\end{tikzpicture}
 \caption{\textbf{Global-stay and state-specific stay models.}
 \textbf{(A)} Empirical transition matrix.
 \textbf{(B)} Global-stay null.
@@ -1263,11 +1338,24 @@ Off-diagonal correlations are consistently positive, whereas diagonal correlatio
 
 \begin{figure}[p]
 \centering
-\begin{overpic}[width=\textwidth]{figures/appendix/a11_binary_mop.png}
-\put(1,94){\panelletter{A}}\put(26,94){\panelletter{B}}\put(51,94){\panelletter{C}}\put(76,94){\panelletter{D}}
-\put(1,62){\panelletter{E}}\put(26,62){\panelletter{F}}\put(51,62){\panelletter{G}}\put(76,62){\panelletter{H}}
-\put(1,30){\panelletter{I}}\put(26,30){\panelletter{J}}\put(51,30){\panelletter{K}}\put(76,30){\panelletter{L}}
-\end{overpic}
+\begin{tikzpicture}
+\node[anchor=south west,inner sep=0] (image) at (0,0)
+  {\includegraphics[width=\textwidth]{figures/appendix/a11_binary_mop.png}};
+\begin{scope}[x={(image.south east)},y={(image.north west)}]
+\node[panel label] at (0.01,0.98) {A};
+\node[panel label] at (0.26,0.98) {B};
+\node[panel label] at (0.51,0.98) {C};
+\node[panel label] at (0.76,0.98) {D};
+\node[panel label] at (0.01,0.65) {E};
+\node[panel label] at (0.26,0.65) {F};
+\node[panel label] at (0.51,0.65) {G};
+\node[panel label] at (0.76,0.65) {H};
+\node[panel label] at (0.01,0.32) {I};
+\node[panel label] at (0.26,0.32) {J};
+\node[panel label] at (0.51,0.32) {K};
+\node[panel label] at (0.76,0.32) {L};
+\end{scope}
+\end{tikzpicture}
 \caption{\textbf{Binary-action maximum-occupancy comparison.}
 \textbf{(A)} Empirical transition matrix.
 \textbf{(B)} Pure MOP prediction.
@@ -1286,11 +1374,27 @@ Off-diagonal correlations are consistently positive, whereas diagonal correlatio
 
 \begin{figure}[p]
 \centering
-\begin{overpic}[width=\textwidth]{figures/appendix/a12_stay_switch_mop.png}
-\put(1,94){\panelletter{A}}\put(21,94){\panelletter{B}}\put(41,94){\panelletter{C}}\put(61,94){\panelletter{D}}\put(81,94){\panelletter{E}}
-\put(1,62){\panelletter{F}}\put(21,62){\panelletter{G}}\put(41,62){\panelletter{H}}\put(61,62){\panelletter{I}}\put(81,62){\panelletter{J}}
-\put(1,30){\panelletter{K}}\put(21,30){\panelletter{L}}\put(41,30){\panelletter{M}}\put(61,30){\panelletter{N}}\put(81,30){\panelletter{O}}
-\end{overpic}
+\begin{tikzpicture}
+\node[anchor=south west,inner sep=0] (image) at (0,0)
+  {\includegraphics[width=\textwidth]{figures/appendix/a12_stay_switch_mop.png}};
+\begin{scope}[x={(image.south east)},y={(image.north west)}]
+\node[panel label] at (0.01,0.98) {A};
+\node[panel label] at (0.21,0.98) {B};
+\node[panel label] at (0.41,0.98) {C};
+\node[panel label] at (0.61,0.98) {D};
+\node[panel label] at (0.81,0.98) {E};
+\node[panel label] at (0.01,0.65) {F};
+\node[panel label] at (0.21,0.65) {G};
+\node[panel label] at (0.41,0.65) {H};
+\node[panel label] at (0.61,0.65) {I};
+\node[panel label] at (0.81,0.65) {J};
+\node[panel label] at (0.01,0.32) {K};
+\node[panel label] at (0.21,0.32) {L};
+\node[panel label] at (0.41,0.32) {M};
+\node[panel label] at (0.61,0.32) {N};
+\node[panel label] at (0.81,0.32) {O};
+\end{scope}
+\end{tikzpicture}
 \caption{\textbf{Stay/switch decomposition and off-diagonal MOP comparison.}
 \textbf{(A)} Empirical full transition matrix.
 \textbf{(B)} Empirical switch-routing matrix.
@@ -1314,10 +1418,18 @@ Off-diagonal correlations are consistently positive, whereas diagonal correlatio
 
 \begin{figure}[htbp]
 \centering
-\begin{overpic}[width=\textwidth]{figures/appendix/a13_entropy_scatterplots.png}
-\put(1,94){\panelletter{A}}\put(34,94){\panelletter{B}}\put(67,94){\panelletter{C}}
-\put(1,48){\panelletter{D}}\put(34,48){\panelletter{E}}\put(67,48){\panelletter{F}}
-\end{overpic}
+\begin{tikzpicture}
+\node[anchor=south west,inner sep=0] (image) at (0,0)
+  {\includegraphics[width=\textwidth]{figures/appendix/a13_entropy_scatterplots.png}};
+\begin{scope}[x={(image.south east)},y={(image.north west)}]
+\node[panel label] at (0.01,0.98) {A};
+\node[panel label] at (0.34,0.98) {B};
+\node[panel label] at (0.67,0.98) {C};
+\node[panel label] at (0.01,0.49) {D};
+\node[panel label] at (0.34,0.49) {E};
+\node[panel label] at (0.67,0.49) {F};
+\end{scope}
+\end{tikzpicture}
 \caption{\textbf{Leading normalized entropy--cognition associations.}
 \textbf{(A)} $H_1$ versus general cognitive factor.
 \textbf{(B)} $H_1$ versus List Sorting.
@@ -1331,10 +1443,18 @@ Lines are ordinary least-squares fits; the highlighted point is the prespecified
 
 \begin{figure}[p]
 \centering
-\begin{overpic}[width=\textwidth]{figures/appendix/a14_entropy_partial_sensitivity.png}
-\put(1,94){\panelletter{A}}\put(34,94){\panelletter{B}}\put(67,94){\panelletter{C}}
-\put(1,48){\panelletter{D}}\put(34,48){\panelletter{E}}\put(67,48){\panelletter{F}}
-\end{overpic}
+\begin{tikzpicture}
+\node[anchor=south west,inner sep=0] (image) at (0,0)
+  {\includegraphics[width=\textwidth]{figures/appendix/a14_entropy_partial_sensitivity.png}};
+\begin{scope}[x={(image.south east)},y={(image.north west)}]
+\node[panel label] at (0.01,0.98) {A};
+\node[panel label] at (0.34,0.98) {B};
+\node[panel label] at (0.67,0.98) {C};
+\node[panel label] at (0.01,0.49) {D};
+\node[panel label] at (0.34,0.49) {E};
+\node[panel label] at (0.67,0.49) {F};
+\end{scope}
+\end{tikzpicture}
 \caption{\textbf{Contextual sensitivity of entropy--cognition associations.}
 \textbf{(A)} $H_1$--general-factor association.
 \textbf{(B)} $H_1$--List-Sorting association.
@@ -1348,9 +1468,13 @@ Each panel compares the unadjusted correlation with correlations adjusted for sy
 
 \begin{figure}[p]
 \centering
-\begin{overpic}[width=\textwidth]{figures/appendix/a15_entropy_cognition_heatmap.png}
-\put(1,94){\panelletter{A}}
-\end{overpic}
+\begin{tikzpicture}
+\node[anchor=south west,inner sep=0] (image) at (0,0)
+  {\includegraphics[width=\textwidth]{figures/appendix/a15_entropy_cognition_heatmap.png}};
+\begin{scope}[x={(image.south east)},y={(image.north west)}]
+\node[panel label] at (0.01,0.98) {A};
+\end{scope}
+\end{tikzpicture}
 \caption{\textbf{Normalized entropy--cognition association matrix.}
 \textbf{(A)} Pearson correlations between four normalized entropy measures and seven cognitive outcomes. A plus sign denotes an uncorrected permutation result below 0.05; no cell survived false-discovery-rate correction across the full family.}
 \label{fig:app-entropy-cognition}
