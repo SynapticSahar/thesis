@@ -101,6 +101,13 @@
     keepaspectratio
   ]{#1}%
 }
+\newcommand{\appendixfirstpanelgraphic}[1]{%
+  \includegraphics[
+    width=\textwidth,
+    height=0.235\textheight,
+    keepaspectratio
+  ]{#1}%
+}
 
 
 \begin{document}
@@ -1108,7 +1115,7 @@ This appendix presents the principal graphical outputs supporting Chapter 3. The
 \centering
 \begin{tikzpicture}
 \node[anchor=south west,inner sep=0] (image) at (0,0)
-  {\appendixpanelgraphic{figures/appendix/a01_state_atlas.png}};
+  {\appendixfirstpanelgraphic{figures/appendix/a01_state_atlas.png}};
 \begin{scope}[x={(image.south east)},y={(image.north west)}]
 \node[panel label] at (0.01,0.98) {A};
 \node[panel label] at (0.34,0.98) {B};
@@ -1128,7 +1135,7 @@ The seven-state solution is treated as a predefined working atlas rather than an
 \vspace{0.5em}
 \begin{tikzpicture}
 \node[anchor=south west,inner sep=0] (image) at (0,0)
-  {\appendixpanelgraphic{figures/appendix/a02_state_dynamics.png}};
+  {\appendixfirstpanelgraphic{figures/appendix/a02_state_dynamics.png}};
 \begin{scope}[x={(image.south east)},y={(image.north west)}]
 \node[panel label] at (0.01,0.98) {A};
 \node[panel label] at (0.34,0.98) {B};
