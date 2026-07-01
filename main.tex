@@ -126,7 +126,11 @@ I would like to dedicate this work to my dearest brother, who has supported me u
 
 \clearpage
 \setcounter{page}{3}
+\begingroup
+\small
+\setstretch{1.0}
 \tableofcontents
+\endgroup
 
 \chapter*{Abstract}
 \addcontentsline{toc}{chapter}{Abstract}
@@ -355,8 +359,9 @@ Sensitivity scope differed by analysis. Geometry evaluated exclusions of the 12 
 
 Cognitive performance was measured using cognitive variables from the HCP behavioural battery. The HCP behavioural battery was designed to measure individual differences in cognitive, emotional, sensory, and motor function (Barch et al., 2013). The cognitive variables used here were drawn from the NIH Toolbox cognition battery and Penn computerized neurocognitive tests, which assess domains such as fluid reasoning, processing speed, cognitive flexibility, working memory, inhibitory control, and vocabulary knowledge (Weintraub et al., 2013; Gur et al., 2010).
 
-A general cognitive factor, \(g\), was estimated from ten cognitive indicators:
+A general cognitive factor, \(g\), was estimated from ten cognitive indicators. The indicators were z-scored across complete cases.
 
+\iffalse
 \begin{center}
 \begin{tabular}{lll}
 \texttt{PMAT24\_A\_CR} & \texttt{ProcSpeed\_Unadj} & \texttt{CardSort\_Unadj} \\
@@ -365,13 +370,13 @@ A general cognitive factor, \(g\), was estimated from ten cognitive indicators:
 \texttt{PicVocab\_Unadj} & & \\
 \end{tabular}
 \end{center}
+\fi
 
-Indicators were z-scored across complete cases. MATLAB \texttt{factoran} fitted a
-one-factor model by maximum likelihood. The factor sign was oriented so that the factor
+MATLAB \texttt{factoran} fitted a one-factor model by maximum likelihood. The factor sign was oriented so that the factor
 score correlated positively with the mean standardized test score. One participant had
 incomplete data, giving \(N = 181\) for \(g\) (Spearman, 1904).
 
-Outcome families were analysis-specific. Entropy analyses used $g$, Penn Matrix Reasoning (PMAT), Processing Speed, Card Sort, List Sort, Flanker, and Picture Vocabulary. Geometry used $g$ plus all ten component indicators listed above. Multivariate transition mapping used five outcomes: List Sort, PMAT, $g$, Flanker, and Card Sort.
+Outcome families were analysis-specific. Entropy analyses used $g$, Penn Matrix Reasoning (PMAT), Processing Speed, Card Sort, List Sort, Flanker, and Picture Vocabulary. Geometry used $g$ plus the same ten component indicators. Multivariate transition mapping used five outcomes: List Sort, PMAT, $g$, Flanker, and Card Sort.
 
 \section{Inferential and modelling analyses}
 
@@ -637,37 +642,43 @@ where $\pi_{ij}$ is the MOP switch policy over destinations $j\neq i$. The stay 
 \caption{The MOP model family.}
 \label{tab:mop_model_family}
 \footnotesize
-
+\setstretch{1.05}
+\renewcommand{\arraystretch}{1.15}
 \begin{tabularx}{\textwidth}{@{}
->{\raggedright\arraybackslash}p{0.36\textwidth}
->{\raggedright\arraybackslash}p{0.16\textwidth}
+>{\raggedright\arraybackslash}p{0.34\textwidth}
 >{\raggedright\arraybackslash}X
 @{}}
 \toprule
-\textbf{Model} & \textbf{Type} & \textbf{Definition} \\
+\textbf{Model and scope} & \textbf{Definition} \\
 \midrule
-PureBinaryMOP
-& Full row
-& Recursive value model over the binary support, with no destination cost \\
+\texttt{PureBinaryMOP}\\
+\emph{Full transition row}
+& Recursive value model over binary transition support, without a destination cost \\
+\addlinespace[4pt]
 
-DispersionDestinationMOP
-& Full row
-& Full-row MOP model with destination dispersion cost \\
+\texttt{DispersionDestinationMOP}\\
+\emph{Full transition row}
+& Full-row MOP model with a destination-dispersion cost \\
+\addlinespace[4pt]
 
-OffdiagPureMOP
-& Switch only
+\texttt{OffdiagPureMOP}\\
+\emph{Switch destinations only}
 & MOP policy over switch destinations, with self-transitions removed \\
+\addlinespace[4pt]
 
-OffdiagDispersionDestinationMOP
-& Switch only
-& Switch-only MOP model with destination dispersion cost \\
+\texttt{OffdiagDispersion}\\
+\texttt{DestinationMOP}\\
+\emph{Switch destinations only}
+& Switch-only MOP model with a destination-dispersion cost \\
+\addlinespace[4pt]
 
-GlobalStay
-& Stay gate
+\texttt{GlobalStay}\\
+\emph{Stay gate}
 & Diagonal probability set to one pooled stay probability \\
+\addlinespace[4pt]
 
-EmpiricalStay
-& Stay gate
+\texttt{EmpiricalStay}\\
+\emph{Stay gate}
 & Diagonal probability set to each state's empirical stay probability \\
 \bottomrule
 \end{tabularx}
@@ -751,32 +762,35 @@ The stay-switch decomposition refined this pattern. Adding destination dispersio
 \compacttablestyle
 \caption{Effects of added model terms on held-out prediction.}
 \label{tab:added_model_terms}
-\scriptsize
-\setstretch{1.0}
-\renewcommand{\arraystretch}{0.80}
+\footnotesize
+\setstretch{1.05}
+\renewcommand{\arraystretch}{1.15}
 \begin{tabularx}{\textwidth}{@{}
->{\raggedright\arraybackslash}p{0.28\textwidth}
->{\raggedright\arraybackslash}X
+>{\raggedright\arraybackslash}p{0.23\textwidth}
+>{\raggedright\arraybackslash}p{0.37\textwidth}
 >{\raggedright\arraybackslash}X
 @{}}
 \toprule
 \textbf{Added term or model} & \textbf{Diagonal / persistence} & \textbf{Off-diagonal / routing} \\
 \midrule
 State-specific stay versus global stay
-& Overall $\Delta\mathrm{NLL}=0.001126$, $q=0.000229$; diagonal $r$: constant/undefined $\rightarrow 0.2606$; diagonal MAE improvement $=0.002853$, $q=0.000229$; diagonal NLL not significant, $q=0.631$
-& Does not model conditional routing; any off-diagonal change reflects stay-switch scaling \\
+& Overall $\Delta\mathrm{NLL}=0.001126$ ($q=0.000229$). Diagonal MAE improved by $0.002853$ ($q=0.000229$), and diagonal $r$ increased from constant/undefined to $0.2606$. Diagonal NLL was not significant ($q=0.631$).
+& No conditional-routing term; off-diagonal changes reflect stay--switch scaling. \\
+\addlinespace[5pt]
 
 Dispersion cost versus binary topology
-& Binary full-row dispersion cost: diagonal $\Delta\mathrm{NLL}=0.011345$, $q=0.0180$; pure-model $r$ undefined; dispersion-model diagonal $r=0.1865$
-& Pure-model $r$ undefined; dispersion-model off-diagonal $r=0.0716$; NLL worsened by $0.003103$, one-sided $q=1.00$ \\
+& Diagonal $\Delta\mathrm{NLL}=0.011345$ ($q=0.0180$). The pure-model $r$ was undefined; the dispersion-model diagonal $r$ was $0.1865$.
+& The dispersion-model off-diagonal $r$ was $0.0716$. NLL worsened by $0.003103$ (one-sided $q=1.00$). \\
+\addlinespace[5pt]
 
 Dispersion cost on switch policy
 & Not applicable
-& Small conditional-switch improvement: $\Delta\mathrm{NLL}=0.002184$, $q=0.0289$, with significant MAE, RMSE, and entropy-error improvements \\
+& Small conditional-switch improvement: $\Delta\mathrm{NLL}=0.002184$ ($q=0.0289$), with corresponding MAE, RMSE, and entropy-error improvements. \\
+\addlinespace[5pt]
 
 Graded geometry distance law
-& Diagonal mainly explained by dwell structure
-& Strong routing prediction, LOOCV off-diagonal $r = 0.54$ \\
+& Diagonal mainly explained by dwell structure.
+& Strong routing prediction; LOOCV off-diagonal $r=0.54$. \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -791,6 +805,7 @@ These effects were modest. The smallest permutation-FDR value was $q=0.0701$; no
 
 The multivariate explanatory analysis tested whether the full transition matrix contained cognitive information beyond single entropy summaries. The latest conditional ridge output changed all five performance estimates. Mean cross-validated correlations were $r=0.27145$ for List Sorting, $0.28958$ for Card Sorting, $0.26539$ for the general factor, $0.23590$ for Flanker, and $0.26627$ for Penn Matrix Reasoning. Valid permutation-family $q$-values were not generated, and the fixed outcome-informed masks make the current permutation null non-selection-aware. Corrected above-null claims should therefore be withheld. This analysis follows the general logic of connectome-based predictive modelling, where brain features are related to individual behavioural differences under cross-validation (Shen et al., 2017), but the present estimates are explanatory associations conditional on the full-sample feature mask rather than unbiased estimates of external predictive performance.
 
+\iffalse
 \begin{table}[H]
 \centering
 \compacttablestyle
@@ -815,6 +830,7 @@ Penn Matrix Reasoning, fluid reasoning & 0.26627 & 0.07028 & 0.001996 & Pending 
 \bottomrule
 \end{tabularx}
 \end{table}
+\fi
 
 The observed repeated cross-validation results showed no consistent advantage for the nonlinear
 models over the ridge-dominant elastic net. For List Sorting, gradient boosting produced a
