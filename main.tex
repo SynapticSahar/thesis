@@ -94,6 +94,13 @@
   font=\bfseries\large,
   inner sep=1.5pt
 }}
+\newcommand{\appendixpanelgraphic}[1]{%
+  \includegraphics[
+    width=\textwidth,
+    height=0.27\textheight,
+    keepaspectratio
+  ]{#1}%
+}
 
 
 \begin{document}
@@ -1097,11 +1104,11 @@ This appendix presents the principal graphical outputs supporting Chapter 3. The
 \captionsetup[figure]{font={normalsize,stretch=1},labelfont={bf,large}}
 \section{State atlas and distributional validation}
 
-\begin{figure}[p]
+\begin{figure}[H]
 \centering
 \begin{tikzpicture}
 \node[anchor=south west,inner sep=0] (image) at (0,0)
-  {\includegraphics[width=\textwidth]{figures/appendix/a01_state_atlas.png}};
+  {\appendixpanelgraphic{figures/appendix/a01_state_atlas.png}};
 \begin{scope}[x={(image.south east)},y={(image.north west)}]
 \node[panel label] at (0.01,0.98) {A};
 \node[panel label] at (0.34,0.98) {B};
@@ -1118,13 +1125,10 @@ This appendix presents the principal graphical outputs supporting Chapter 3. The
 \textbf{(E)} State labels projected onto the first two principal components.
 The seven-state solution is treated as a predefined working atlas rather than an optimal discrete partition.}
 \label{fig:app-state-atlas}
-\end{figure}
-
-\begin{figure}[p]
-\centering
+\vspace{0.5em}
 \begin{tikzpicture}
 \node[anchor=south west,inner sep=0] (image) at (0,0)
-  {\includegraphics[width=\textwidth]{figures/appendix/a02_state_dynamics.png}};
+  {\appendixpanelgraphic{figures/appendix/a02_state_dynamics.png}};
 \begin{scope}[x={(image.south east)},y={(image.north west)}]
 \node[panel label] at (0.01,0.98) {A};
 \node[panel label] at (0.34,0.98) {B};
@@ -1148,11 +1152,11 @@ The seven-state solution is treated as a predefined working atlas rather than an
 \label{fig:app-state-dynamics}
 \end{figure}
 
-\begin{figure}[p]
+\begin{figure}[H]
 \centering
 \begin{tikzpicture}
 \node[anchor=south west,inner sep=0] (image) at (0,0)
-  {\includegraphics[width=\textwidth]{figures/appendix/a03_gmm_validation.png}};
+  {\appendixpanelgraphic{figures/appendix/a03_gmm_validation.png}};
 \begin{scope}[x={(image.south east)},y={(image.north west)}]
 \node[panel label] at (0.01,0.98) {A};
 \node[panel label] at (0.34,0.98) {B};
@@ -1176,13 +1180,10 @@ The seven-state solution is treated as a predefined working atlas rather than an
 \textbf{(H)} Distribution of assignment confidence.
 \textbf{(I)} Best-BIC mixture weights.}
 \label{fig:app-gmm-validation}
-\end{figure}
-
-\begin{figure}[p]
-\centering
+\vspace{0.5em}
 \begin{tikzpicture}
 \node[anchor=south west,inner sep=0] (image) at (0,0)
-  {\includegraphics[width=\textwidth]{figures/appendix/a04_gmm_overlap_k7.png}};
+  {\appendixpanelgraphic{figures/appendix/a04_gmm_overlap_k7.png}};
 \begin{scope}[x={(image.south east)},y={(image.north west)}]
 \node[panel label] at (0.01,0.98) {A};
 \node[panel label] at (0.51,0.98) {B};
@@ -1202,11 +1203,11 @@ The low adjusted Rand index indicates that the mixture does not recover the pred
 \clearpage
 \section{Transition structure and generative models}
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \begin{tikzpicture}
 \node[anchor=south west,inner sep=0] (image) at (0,0)
-  {\includegraphics[width=\textwidth]{figures/appendix/a05_surrogate_nulls.png}};
+  {\appendixpanelgraphic{figures/appendix/a05_surrogate_nulls.png}};
 \begin{scope}[x={(image.south east)},y={(image.north west)}]
 \node[panel label] at (0.01,0.98) {A};
 \node[panel label] at (0.51,0.98) {B};
@@ -1224,13 +1225,10 @@ The low adjusted Rand index indicates that the mixture does not recover the pred
 \textbf{(E)} Participant observed-minus-null differences.
 \textbf{(F)} Number of participants with corrected lower-tail results.}
 \label{fig:app-surrogate-nulls}
-\end{figure}
-
-\begin{figure}[p]
-\centering
+\vspace{0.5em}
 \begin{tikzpicture}
 \node[anchor=south west,inner sep=0] (image) at (0,0)
-  {\includegraphics[width=\textwidth]{figures/appendix/a06_surrogate_signflip.png}};
+  {\appendixpanelgraphic{figures/appendix/a06_surrogate_signflip.png}};
 \begin{scope}[x={(image.south east)},y={(image.north west)}]
 \node[panel label] at (0.01,0.98) {A};
 \node[panel label] at (0.51,0.98) {B};
@@ -1247,11 +1245,11 @@ Red lines mark observed mean differences; negative values indicate lower observe
 \label{fig:app-surrogate-signflip}
 \end{figure}
 
-\begin{figure}[p]
+\begin{figure}[H]
 \centering
 \begin{tikzpicture}
 \node[anchor=south west,inner sep=0] (image) at (0,0)
-  {\includegraphics[width=\textwidth]{figures/appendix/a07_geometry_group_fit.png}};
+  {\appendixpanelgraphic{figures/appendix/a07_geometry_group_fit.png}};
 \begin{scope}[x={(image.south east)},y={(image.north west)}]
 \node[panel label] at (0.01,0.98) {A};
 \end{scope}
@@ -1259,13 +1257,10 @@ Red lines mark observed mean differences; negative values indicate lower observe
 \caption{\textbf{Full-sample graded-geometry fit.}
 \textbf{(A)} Model-predicted versus empirical transition probabilities, distinguishing diagonal persistence from off-diagonal switching. The exponential distance law captures off-diagonal ordering but not the self-transition pattern.}
 \label{fig:app-geometry-group}
-\end{figure}
-
-\begin{figure}[p]
-\centering
+\vspace{0.5em}
 \begin{tikzpicture}
 \node[anchor=south west,inner sep=0] (image) at (0,0)
-  {\includegraphics[width=\textwidth]{figures/appendix/a08_geometry_loocv.png}};
+  {\appendixpanelgraphic{figures/appendix/a08_geometry_loocv.png}};
 \begin{scope}[x={(image.south east)},y={(image.north west)}]
 \node[panel label] at (0.01,0.98) {A};
 \node[panel label] at (0.51,0.98) {B};
@@ -1278,11 +1273,11 @@ Off-diagonal correlations are consistently positive, whereas diagonal correlatio
 \label{fig:app-geometry-loocv}
 \end{figure}
 
-\begin{figure}[p]
+\begin{figure}[H]
 \centering
 \begin{tikzpicture}
 \node[anchor=south west,inner sep=0] (image) at (0,0)
-  {\includegraphics[width=\textwidth]{figures/appendix/a09_geometry_cognition.png}};
+  {\appendixpanelgraphic{figures/appendix/a09_geometry_cognition.png}};
 \begin{scope}[x={(image.south east)},y={(image.north west)}]
 \node[panel label] at (0.01,0.98) {A};
 \end{scope}
@@ -1290,13 +1285,10 @@ Off-diagonal correlations are consistently positive, whereas diagonal correlatio
 \caption{\textbf{Associations between graded-geometry fit and cognition.}
 \textbf{(A)} Heatmap of age- and sex-adjusted partial Pearson correlations between participant-level held-out geometry fit and cognitive measures. Effects were weak and none survived false-discovery-rate correction.}
 \label{fig:app-geometry-cognition}
-\end{figure}
-
-\begin{figure}[p]
-\centering
+\vspace{0.5em}
 \begin{tikzpicture}
 \node[anchor=south west,inner sep=0] (image) at (0,0)
-  {\includegraphics[width=\textwidth]{figures/appendix/a10_dwell_bias.png}};
+  {\appendixpanelgraphic{figures/appendix/a10_dwell_bias.png}};
 \begin{scope}[x={(image.south east)},y={(image.north west)}]
 \node[panel label] at (0.01,0.98) {A};
 \node[panel label] at (0.26,0.98) {B};
@@ -1328,11 +1320,11 @@ Off-diagonal correlations are consistently positive, whereas diagonal correlatio
 \label{fig:app-dwell-bias}
 \end{figure}
 
-\begin{figure}[p]
+\begin{figure}[H]
 \centering
 \begin{tikzpicture}
 \node[anchor=south west,inner sep=0] (image) at (0,0)
-  {\includegraphics[width=\textwidth]{figures/appendix/a11_binary_mop.png}};
+  {\appendixpanelgraphic{figures/appendix/a11_binary_mop.png}};
 \begin{scope}[x={(image.south east)},y={(image.north west)}]
 \node[panel label] at (0.01,0.98) {A};
 \node[panel label] at (0.26,0.98) {B};
@@ -1362,13 +1354,10 @@ Off-diagonal correlations are consistently positive, whereas diagonal correlatio
 \textbf{(K)} Retained destination-cost estimate.
 \textbf{(L)} Key held-out improvements.}
 \label{fig:app-binary-mop}
-\end{figure}
-
-\begin{figure}[p]
-\centering
+\vspace{0.5em}
 \begin{tikzpicture}
 \node[anchor=south west,inner sep=0] (image) at (0,0)
-  {\includegraphics[width=\textwidth]{figures/appendix/a12_stay_switch_mop.png}};
+  {\appendixpanelgraphic{figures/appendix/a12_stay_switch_mop.png}};
 \begin{scope}[x={(image.south east)},y={(image.north west)}]
 \node[panel label] at (0.01,0.98) {A};
 \node[panel label] at (0.21,0.98) {B};
@@ -1408,11 +1397,11 @@ Off-diagonal correlations are consistently positive, whereas diagonal correlatio
 \clearpage
 \section{Entropy and cognition}
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \begin{tikzpicture}
 \node[anchor=south west,inner sep=0] (image) at (0,0)
-  {\includegraphics[width=\textwidth]{figures/appendix/a13_entropy_scatterplots.png}};
+  {\appendixpanelgraphic{figures/appendix/a13_entropy_scatterplots.png}};
 \begin{scope}[x={(image.south east)},y={(image.north west)}]
 \node[panel label] at (0.01,0.98) {A};
 \node[panel label] at (0.34,0.98) {B};
@@ -1431,13 +1420,10 @@ Off-diagonal correlations are consistently positive, whereas diagonal correlatio
 \textbf{(F)} $H_2$ versus Penn Matrix Reasoning.
 Lines are ordinary least-squares fits; the highlighted point is the prespecified sensitivity case.}
 \label{fig:app-entropy-scatters}
-\end{figure}
-
-\begin{figure}[p]
-\centering
+\vspace{0.5em}
 \begin{tikzpicture}
 \node[anchor=south west,inner sep=0] (image) at (0,0)
-  {\includegraphics[width=\textwidth]{figures/appendix/a14_entropy_partial_sensitivity.png}};
+  {\appendixpanelgraphic{figures/appendix/a14_entropy_partial_sensitivity.png}};
 \begin{scope}[x={(image.south east)},y={(image.north west)}]
 \node[panel label] at (0.01,0.98) {A};
 \node[panel label] at (0.34,0.98) {B};
@@ -1458,11 +1444,11 @@ Each panel compares the unadjusted correlation with correlations adjusted for sy
 \label{fig:app-entropy-partial}
 \end{figure}
 
-\begin{figure}[p]
+\begin{figure}[H]
 \centering
 \begin{tikzpicture}
 \node[anchor=south west,inner sep=0] (image) at (0,0)
-  {\includegraphics[width=\textwidth]{figures/appendix/a15_entropy_cognition_heatmap.png}};
+  {\appendixpanelgraphic{figures/appendix/a15_entropy_cognition_heatmap.png}};
 \begin{scope}[x={(image.south east)},y={(image.north west)}]
 \node[panel label] at (0.01,0.98) {A};
 \end{scope}
