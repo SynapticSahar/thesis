@@ -36,6 +36,41 @@
 \setlength{\parskip}{0pt}
 \raggedbottom
 
+% ---------- Compact chapter and heading spacing ----------
+\usepackage{titlesec}
+
+% Make \chapter behave like a normal heading, not a new-page heading
+\titleclass{\chapter}{straight}
+
+% Chapter title only: no big "Chapter 1", no printed chapter number
+\titleformat{\chapter}
+  {\normalfont\Large\bfseries}
+  {\thechapter}
+  {0.7em}
+  {}
+
+% Compact spacing around chapter titles
+\titlespacing*{\chapter}
+  {0pt}                 % left indent
+  {0.8\baselineskip}    % space before chapter title
+  {0.5\baselineskip}    % space after chapter title
+
+% Compact spacing around sections
+\titlespacing*{\section}
+  {0pt}
+  {0.7\baselineskip}
+  {0.3\baselineskip}
+
+\titlespacing*{\subsection}
+  {0pt}
+  {0.5\baselineskip}
+  {0.2\baselineskip}
+
+\titlespacing*{\subsubsection}
+  {0pt}
+  {0.4\baselineskip}
+  {0.15\baselineskip}
+  
 \newcommand{\compacttablestyle}{%
   \captionsetup{font=footnotesize,skip=2pt}%
   \small
@@ -127,13 +162,14 @@ I would like to dedicate this work to my dearest brother, who has supported me u
 
 
 \clearpage
-\setcounter{page}{3}
+\setcounter{page}{2}
 \begingroup
 \small
 \setstretch{1.0}
 \tableofcontents
 \endgroup
 
+\clearpage
 \chapter*{Abstract}
 \addcontentsline{toc}{chapter}{Abstract}
 
@@ -928,7 +964,7 @@ Contextual adjustment substantially attenuated the entropy-cognition association
 
 \endgroup
 
-
+\clearpage
 \chapter{Discussion}
 This thesis examined whether resting-state synchronization dynamics can be described as a
 sequence of recurring local-synchrony states, whether transitions between those states are
@@ -997,6 +1033,7 @@ descriptive pending stronger correction and validation. The strongest conclusion
 mechanistic rather than predictive: transition dynamics provide a useful way to characterize the
 temporal organization of resting-state brain activity.
 
+\clearpage
 \chapter{Statement of Contribution}
 In accordance with the requirements for the Master's Thesis in Computational Neuroscience at Universitat Pompeu Fabra, this statement details the specific contributions made to the research presented in this document. The broad conceptual goals regarding brain turbulence and vortex spaces were formulated by Gustavo Deco, while the overarching objectives to evaluate resting-state transition patterns and test the maximum occupancy principle (MOP) as a generative transition hypothesis were collaboratively evolved by Gustavo Deco, Mohaddeseh Hosseinzadeh, and Ruben Moreno Bote. Methodologically, Gustavo Deco provided the foundational definition of local Kuramoto synchronization and the recommendation for a k-means clustering framework, and Ruben Moreno Bote originally conceptualized and formulated the core maximum occupancy principle. Mohaddeseh Hosseinzadeh independently designed and developed all other methodologies, including introducing the 50-dimensional principal component analysis (PCA) dimensionality reduction step, inventing the novel exponential graded-geometry distance model, designing the occupancy- and dwell-preserving surrogate null testing frameworks, and formulating the specific destination dispersion cost variant used to expand the MOP policy. Using raw data acquired by the Human Connectome Project consortium, Mohaddeseh Hosseinzadeh independently developed and implemented the entire computational pipeline in MATLAB. This included coding the PCA and clustering execution, the graded-geometry optimization loops, the surrogate-shuffling frameworks, and the custom recursive policy functions required to computationally implement the MOP equations alongside the destination dispersion cost function. For the multivariate transition-cognition analyses, Mohaddeseh Hosseinzadeh utilized regularized ridge dominant elastic net regression provided by Gustavo Deco, adapting it to interface with the empirical transition matrices. Mohaddeseh Hosseinzadeh independently implemented the nonlinear machine-learning analysis pipelines, including support-vector regression, random forests, and gradient-boosted trees. She drafted the thesis and revised it in response to supervisory feedback. Gustavo Deco and Ruben Moreno Bote supervised the research, contributed to the interpretation of the findings, and reviewed the manuscript. All named contributors reviewed and approved the final version
 
@@ -1007,8 +1044,7 @@ In accordance with the requirements for the Master's Thesis in Computational Neu
 
 This appendix presents the principal graphical outputs supporting Chapter 3. The figures follow the order of the Results chapter: state construction and validation, temporal and generative transition analyses, and entropy--cognition associations. All panels were generated from the analysis outputs described in Chapter 2.
 
-\captionsetup{font={normalsize,stretch=1.5},labelfont=bf}
-\clearpage
+\captionsetup{font={normalsize,stretch=1},labelfont=bf}
 \section{State atlas and distributional validation}
 
 \begin{figure}[H]
