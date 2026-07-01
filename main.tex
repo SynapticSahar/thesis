@@ -11,6 +11,8 @@
 \usepackage{microtype}
 \usepackage{makecell}
 \usepackage{graphicx}
+\usepackage[percent]{overpic}
+\usepackage{xcolor}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage[hidelinks]{hyperref}
@@ -83,6 +85,12 @@
   \setlength{\tabcolsep}{3pt}%
   \renewcommand{\arraystretch}{0.85}%
 }
+
+% Readable panel labels for composite figures.
+\newcommand{\panelletter}[1]{%
+  \begingroup\setlength{\fboxsep}{1.5pt}%
+  \colorbox{white}{\textcolor{black}{\bfseries\large #1}}%
+  \endgroup}
 
 
 \begin{document}
@@ -1091,34 +1099,75 @@ In accordance with the requirements for the Master's Thesis in Computational Neu
 
 This appendix presents the principal graphical outputs supporting Chapter 3. The figures follow the order of the Results chapter: state construction and validation, temporal and generative transition analyses, and entropy--cognition associations. All panels were generated from the analysis outputs described in Chapter 2.
 
-\captionsetup{font={normalsize,stretch=1},labelfont=bf}
+\captionsetup[figure]{font={normalsize,stretch=1},labelfont={bf,large}}
 \section{State atlas and distributional validation}
 
-\begin{figure}[H]
+\begin{figure}[p]
 \centering
-\includegraphics[width=0.88\textwidth,height=0.58\textheight,keepaspectratio]{figures/appendix/a01_state_atlas.png}
-\caption{\textbf{Seven-state synchronization atlas and clustering diagnostics.} The upper panels show k-means inertia, average silhouette width, and the number of volumes assigned to each state. The lower panels show the seven centroid profiles in raw local synchronization space and the corresponding labels projected onto the first two principal components. The seven-state solution is used as a predefined working atlas rather than as an optimal discrete partition.}
+\begin{overpic}[width=\textwidth]{figures/appendix/a01_state_atlas.png}
+\put(1,94){\panelletter{A}}\put(34,94){\panelletter{B}}\put(68,94){\panelletter{C}}
+\put(1,55){\panelletter{D}}\put(68,55){\panelletter{E}}
+\end{overpic}
+\caption{\textbf{Seven-state synchronization atlas and clustering diagnostics.}
+\textbf{(A)} K-means inertia across candidate state counts.
+\textbf{(B)} Mean silhouette width across candidate counts.
+\textbf{(C)} Number of volumes assigned to each of the seven states.
+\textbf{(D)} State-centroid profiles in local-synchronization space.
+\textbf{(E)} State labels projected onto the first two principal components.
+The seven-state solution is treated as a predefined working atlas rather than an optimal discrete partition.}
 \label{fig:app-state-atlas}
 \end{figure}
 
 \begin{figure}[p]
 \centering
-\includegraphics[width=\textwidth,height=0.72\textheight,keepaspectratio]{figures/appendix/a02_state_dynamics.png}
-\caption{\textbf{State assignments and participant-level dynamic summaries.} Example state sequences and distances from the assigned centroid are shown alongside participant occupancies, mean state occupancy, the pooled transition matrix, the distribution of switch rates, and state-specific dwell-time distributions. The strong transition-matrix diagonal reflects persistent runs within states.}
+\begin{overpic}[width=\textwidth]{figures/appendix/a02_state_dynamics.png}
+\put(1,94){\panelletter{A}}\put(34,94){\panelletter{B}}\put(67,94){\panelletter{C}}
+\put(1,62){\panelletter{D}}\put(34,62){\panelletter{E}}\put(67,62){\panelletter{F}}
+\put(1,30){\panelletter{G}}\put(34,30){\panelletter{H}}\put(67,30){\panelletter{I}}
+\end{overpic}
+\caption{\textbf{State assignments and participant-level dynamic summaries.}
+\textbf{(A--C)} Example state sequences for three participants.
+\textbf{(D)} Distance of each volume from its assigned centroid.
+\textbf{(E)} Participant-by-state occupancy matrix.
+\textbf{(F)} Mean occupancy of each state.
+\textbf{(G)} Pooled group transition-probability matrix.
+\textbf{(H)} Distribution of participant switch rates.
+\textbf{(I)} State-specific dwell-time distributions.}
 \label{fig:app-state-dynamics}
 \end{figure}
 
 \begin{figure}[p]
 \centering
-\includegraphics[width=\textwidth,height=0.72\textheight,keepaspectratio]{figures/appendix/a03_gmm_validation.png}
-\caption{\textbf{Gaussian-mixture validation of the synchronization state space.} Model-selection and participant-blocked predictive-density curves are shown with a single-Gaussian diagnostic, low-dimensional projections, k-means--mixture overlap, posterior assignment confidence, and mixture weights. The diagnostics indicate a complex, overlapping density for which the available criteria do not uniquely support seven discrete components.}
+\begin{overpic}[width=\textwidth]{figures/appendix/a03_gmm_validation.png}
+\put(1,94){\panelletter{A}}\put(34,94){\panelletter{B}}\put(67,94){\panelletter{C}}
+\put(1,62){\panelletter{D}}\put(34,62){\panelletter{E}}\put(67,62){\panelletter{F}}
+\put(1,30){\panelletter{G}}\put(34,30){\panelletter{H}}\put(67,30){\panelletter{I}}
+\end{overpic}
+\caption{\textbf{Gaussian-mixture validation of the synchronization state space.}
+\textbf{(A)} BIC and AIC across candidate mixture sizes.
+\textbf{(B)} Participant-blocked out-of-sample predictive density.
+\textbf{(C)} Quantile diagnostic for a single Gaussian.
+\textbf{(D)} K-means labels in the first two principal components.
+\textbf{(E)} Best-BIC mixture assignments in the same projection.
+\textbf{(F)} Posterior assignment confidence.
+\textbf{(G)} Overlap between atlas states and mixture components.
+\textbf{(H)} Distribution of assignment confidence.
+\textbf{(I)} Best-BIC mixture weights.}
 \label{fig:app-gmm-validation}
 \end{figure}
 
 \begin{figure}[p]
 \centering
-\includegraphics[width=\textwidth,height=0.72\textheight,keepaspectratio]{figures/appendix/a04_gmm_overlap_k7.png}
-\caption{\textbf{Overlap between the seven-state atlas and a seven-component Gaussian mixture.} Raw and normalized cross-tabulations compare k-means state labels with Gaussian-mixture assignments. The low adjusted Rand index shows that the mixture components do not recover the predefined seven-state partition, despite generally high posterior assignment confidence.}
+\begin{overpic}[width=\textwidth]{figures/appendix/a04_gmm_overlap_k7.png}
+\put(1,94){\panelletter{A}}\put(51,94){\panelletter{B}}
+\put(1,48){\panelletter{C}}\put(51,48){\panelletter{D}}
+\end{overpic}
+\caption{\textbf{Overlap between the seven-state atlas and a seven-component Gaussian mixture.}
+\textbf{(A)} Raw state-by-component counts.
+\textbf{(B)} Row-normalized overlap.
+\textbf{(C)} Column-normalized overlap.
+\textbf{(D)} Posterior assignment-confidence distribution.
+The low adjusted Rand index indicates that the mixture does not recover the predefined atlas partition.}
 \label{fig:app-gmm-overlap}
 \end{figure}
 
@@ -1127,57 +1176,136 @@ This appendix presents the principal graphical outputs supporting Chapter 3. The
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=\textwidth,height=0.72\textheight,keepaspectratio]{figures/appendix/a05_surrogate_nulls.png}
-\caption{\textbf{Occupancy- and dwell-preserving surrogate-null analyses.} The upper panels compare the pooled observed transition entropy with each surrogate distribution. The middle and lower panels show participant-level observed-versus-null values, observed-minus-null differences, and the number of participants with lower-tail corrected results. Lower observed entropy indicates temporal structure beyond the constraints preserved by the corresponding null.}
+\begin{overpic}[width=\textwidth]{figures/appendix/a05_surrogate_nulls.png}
+\put(1,94){\panelletter{A}}\put(51,94){\panelletter{B}}
+\put(1,62){\panelletter{C}}\put(51,62){\panelletter{D}}
+\put(1,30){\panelletter{E}}\put(51,30){\panelletter{F}}
+\end{overpic}
+\caption{\textbf{Occupancy- and dwell-preserving surrogate-null analyses.}
+\textbf{(A)} Pooled observed entropy against the occupancy-preserving null.
+\textbf{(B)} Pooled observed entropy against the dwell-preserving null.
+\textbf{(C)} Participant observed-versus-null values for the occupancy null.
+\textbf{(D)} Participant observed-versus-null values for the dwell null.
+\textbf{(E)} Participant observed-minus-null differences.
+\textbf{(F)} Number of participants with corrected lower-tail results.}
 \label{fig:app-surrogate-nulls}
 \end{figure}
 
 \begin{figure}[p]
 \centering
-\includegraphics[width=\textwidth,height=0.72\textheight,keepaspectratio]{figures/appendix/a06_surrogate_signflip.png}
-\caption{\textbf{Participant-level sign-flip tests of transition-entropy differences.} Null distributions of the mean participant-level entropy difference are shown for the full and off-diagonal entropy measures under occupancy-preserving and dwell-preserving surrogates. Red lines mark the observed mean differences; negative values indicate lower observed entropy than under the null.}
+\begin{overpic}[width=\textwidth]{figures/appendix/a06_surrogate_signflip.png}
+\put(1,94){\panelletter{A}}\put(51,94){\panelletter{B}}
+\put(1,48){\panelletter{C}}\put(51,48){\panelletter{D}}
+\end{overpic}
+\caption{\textbf{Participant-level sign-flip tests of transition-entropy differences.}
+\textbf{(A)} Full transition entropy under the occupancy-preserving null.
+\textbf{(B)} Off-diagonal entropy under the occupancy-preserving null.
+\textbf{(C)} Full transition entropy under the dwell-preserving null.
+\textbf{(D)} Off-diagonal entropy under the dwell-preserving null.
+Red lines mark observed mean differences; negative values indicate lower observed entropy.}
 \label{fig:app-surrogate-signflip}
 \end{figure}
 
 \begin{figure}[p]
 \centering
-\includegraphics[width=\textwidth,height=0.72\textheight,keepaspectratio]{figures/appendix/a07_geometry_group_fit.png}
-\caption{\textbf{Full-sample graded-geometry fit.} Predicted and empirical transition probabilities are shown separately for diagonal and off-diagonal entries. The exponential distance law captures the ordering of off-diagonal switch probabilities but does not reproduce the magnitude or across-state pattern of self-transition probabilities.}
+\begin{overpic}[width=\textwidth]{figures/appendix/a07_geometry_group_fit.png}
+\put(1,94){\panelletter{A}}
+\end{overpic}
+\caption{\textbf{Full-sample graded-geometry fit.}
+\textbf{(A)} Model-predicted versus empirical transition probabilities, distinguishing diagonal persistence from off-diagonal switching. The exponential distance law captures off-diagonal ordering but not the self-transition pattern.}
 \label{fig:app-geometry-group}
 \end{figure}
 
 \begin{figure}[p]
 \centering
-\includegraphics[width=\textwidth,height=0.72\textheight,keepaspectratio]{figures/appendix/a08_geometry_loocv.png}
-\caption{\textbf{Held-out graded-geometry fit across participants.} Distributions of leave-one-participant-out correlations are shown for off-diagonal switch routing and diagonal persistence. The off-diagonal distribution is consistently positive, whereas diagonal correlations are broad and centred near zero.}
+\begin{overpic}[width=\textwidth]{figures/appendix/a08_geometry_loocv.png}
+\put(1,94){\panelletter{A}}\put(51,94){\panelletter{B}}
+\end{overpic}
+\caption{\textbf{Held-out graded-geometry fit across participants.}
+\textbf{(A)} Leave-one-participant-out correlations for off-diagonal switch routing.
+\textbf{(B)} Corresponding correlations for diagonal persistence.
+Off-diagonal correlations are consistently positive, whereas diagonal correlations are broad and centred near zero.}
 \label{fig:app-geometry-loocv}
 \end{figure}
 
 \begin{figure}[p]
 \centering
-\includegraphics[width=\textwidth,height=0.72\textheight,keepaspectratio]{figures/appendix/a09_geometry_cognition.png}
-\caption{\textbf{Associations between graded-geometry fit and cognition.} Cells show partial Pearson correlations between participant-level held-out fit and cognitive measures after adjustment for age and sex. Effects were weak, and none survived false-discovery-rate correction.}
+\begin{overpic}[width=\textwidth]{figures/appendix/a09_geometry_cognition.png}
+\put(1,94){\panelletter{A}}
+\end{overpic}
+\caption{\textbf{Associations between graded-geometry fit and cognition.}
+\textbf{(A)} Heatmap of age- and sex-adjusted partial Pearson correlations between participant-level held-out geometry fit and cognitive measures. Effects were weak and none survived false-discovery-rate correction.}
 \label{fig:app-geometry-cognition}
 \end{figure}
 
 \begin{figure}[p]
 \centering
-\includegraphics[width=\textwidth,height=0.72\textheight,keepaspectratio]{figures/appendix/a10_dwell_bias.png}
-\caption{\textbf{Global-stay and state-specific stay models.} Empirical and fitted transition matrices are shown with state-specific stay probabilities and full-sample and held-out performance summaries. Allowing the stay probability to vary across states improves persistence modelling while leaving conditional switch routing uniform.}
+\begin{overpic}[width=\textwidth]{figures/appendix/a10_dwell_bias.png}
+\put(1,94){\panelletter{A}}\put(26,94){\panelletter{B}}\put(51,94){\panelletter{C}}\put(76,94){\panelletter{D}}
+\put(1,62){\panelletter{E}}\put(26,62){\panelletter{F}}\put(51,62){\panelletter{G}}\put(76,62){\panelletter{H}}
+\put(1,30){\panelletter{I}}\put(26,30){\panelletter{J}}\put(51,30){\panelletter{K}}\put(76,30){\panelletter{L}}
+\end{overpic}
+\caption{\textbf{Global-stay and state-specific stay models.}
+\textbf{(A)} Empirical transition matrix.
+\textbf{(B)} Global-stay null.
+\textbf{(C)} State-specific stay model.
+\textbf{(D)} Training self-transition probabilities.
+\textbf{(E)} Full-sample NLL.
+\textbf{(F)} Absolute probability error.
+\textbf{(G)} Predicted--empirical correlation.
+\textbf{(H)} Entropy error.
+\textbf{(I)} Diagonal fit.
+\textbf{(J)} Off-diagonal fit under the global null.
+\textbf{(K)} Off-diagonal fit with empirical stay rates.
+\textbf{(L)} Held-out entropy error.}
 \label{fig:app-dwell-bias}
 \end{figure}
 
 \begin{figure}[p]
 \centering
-\includegraphics[width=\textwidth,height=0.72\textheight,keepaspectratio]{figures/appendix/a11_binary_mop.png}
-\caption{\textbf{Binary-action maximum occupancy comparison.} The pure binary-support MOP baseline is uniform because the observed action support is saturated. Adding the retained destination-dispersion cost creates destination-dependent probabilities and changes full-row and diagonal fit, but provides little off-diagonal routing accuracy.}
+\begin{overpic}[width=\textwidth]{figures/appendix/a11_binary_mop.png}
+\put(1,94){\panelletter{A}}\put(26,94){\panelletter{B}}\put(51,94){\panelletter{C}}\put(76,94){\panelletter{D}}
+\put(1,62){\panelletter{E}}\put(26,62){\panelletter{F}}\put(51,62){\panelletter{G}}\put(76,62){\panelletter{H}}
+\put(1,30){\panelletter{I}}\put(26,30){\panelletter{J}}\put(51,30){\panelletter{K}}\put(76,30){\panelletter{L}}
+\end{overpic}
+\caption{\textbf{Binary-action maximum-occupancy comparison.}
+\textbf{(A)} Empirical transition matrix.
+\textbf{(B)} Pure MOP prediction.
+\textbf{(C)} Dispersion-cost prediction.
+\textbf{(D)} Difference between fitted matrices.
+\textbf{(E)} Pure-MOP predicted versus empirical probabilities.
+\textbf{(F)} Dispersion-model fit for all entries.
+\textbf{(G)} Dispersion-model diagonal fit.
+\textbf{(H)} Full-sample likelihood.
+\textbf{(I)} Predicted--empirical correlations.
+\textbf{(J)} Diagonal performance.
+\textbf{(K)} Retained destination-cost estimate.
+\textbf{(L)} Key held-out improvements.}
 \label{fig:app-binary-mop}
 \end{figure}
 
 \begin{figure}[p]
 \centering
-\includegraphics[width=\textwidth,height=0.72\textheight,keepaspectratio]{figures/appendix/a12_stay_switch_mop.png}
-\caption{\textbf{Stay/switch decomposition and off-diagonal MOP comparison.} The upper panels separate empirical persistence from conditional switch routing and compare the topology-only and dispersion-cost switch policies. The lower panels summarize full-sample fit and held-out improvements. State-specific stay gates account for persistence, while the destination-dispersion term yields only a small improvement in conditional switch routing.}
+\begin{overpic}[width=\textwidth]{figures/appendix/a12_stay_switch_mop.png}
+\put(1,94){\panelletter{A}}\put(21,94){\panelletter{B}}\put(41,94){\panelletter{C}}\put(61,94){\panelletter{D}}\put(81,94){\panelletter{E}}
+\put(1,62){\panelletter{F}}\put(21,62){\panelletter{G}}\put(41,62){\panelletter{H}}\put(61,62){\panelletter{I}}\put(81,62){\panelletter{J}}
+\put(1,30){\panelletter{K}}\put(21,30){\panelletter{L}}\put(41,30){\panelletter{M}}\put(61,30){\panelletter{N}}\put(81,30){\panelletter{O}}
+\end{overpic}
+\caption{\textbf{Stay/switch decomposition and off-diagonal MOP comparison.}
+\textbf{(A)} Empirical full transition matrix.
+\textbf{(B)} Empirical switch-routing matrix.
+\textbf{(C)} Topology-only switch policy.
+\textbf{(D)} Dispersion-cost switch policy.
+\textbf{(E--F)} Predicted versus empirical routing for the two policies.
+\textbf{(G)} Group switch-routing NLL.
+\textbf{(H)} Group routing metrics.
+\textbf{(I)} Retained destination cost.
+\textbf{(J)} Retained stay gates.
+\textbf{(K)} Two-stage full-transition NLL.
+\textbf{(L)} Two-stage correlations.
+\textbf{(M)} Held-out switch-routing improvement.
+\textbf{(N)} Held-out two-stage MOP improvement.
+\textbf{(O)} Held-out NLL comparison.}
 \label{fig:app-stay-switch-mop}
 \end{figure}
 
@@ -1186,22 +1314,45 @@ This appendix presents the principal graphical outputs supporting Chapter 3. The
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=\textwidth,height=0.72\textheight,keepaspectratio]{figures/appendix/a13_entropy_scatterplots.png}
-\caption{\textbf{Leading normalized entropy--cognition associations.} Scatterplots show the six highest-ranked pairs from the primary permutation analysis, with ordinary least-squares trend lines. The highlighted participant is the prespecified single-case sensitivity observation. Reported $q$-values are false-discovery-rate corrected across the complete entropy-by-cognition family.}
+\begin{overpic}[width=\textwidth]{figures/appendix/a13_entropy_scatterplots.png}
+\put(1,94){\panelletter{A}}\put(34,94){\panelletter{B}}\put(67,94){\panelletter{C}}
+\put(1,48){\panelletter{D}}\put(34,48){\panelletter{E}}\put(67,48){\panelletter{F}}
+\end{overpic}
+\caption{\textbf{Leading normalized entropy--cognition associations.}
+\textbf{(A)} $H_1$ versus general cognitive factor.
+\textbf{(B)} $H_1$ versus List Sorting.
+\textbf{(C)} $H_2$ versus List Sorting.
+\textbf{(D)} $H_{2,\mathrm{switch}}$ versus general cognitive factor.
+\textbf{(E)} $H_1$ versus Picture Vocabulary.
+\textbf{(F)} $H_2$ versus Penn Matrix Reasoning.
+Lines are ordinary least-squares fits; the highlighted point is the prespecified sensitivity case.}
 \label{fig:app-entropy-scatters}
 \end{figure}
 
 \begin{figure}[p]
 \centering
-\includegraphics[width=\textwidth,height=0.72\textheight,keepaspectratio]{figures/appendix/a14_entropy_partial_sensitivity.png}
-\caption{\textbf{Contextual sensitivity of entropy--cognition associations.} Unadjusted correlations are compared with partial correlations controlling for global synchronization and metastability, switch rate and maximum state occupancy, or all contextual measures. The leading associations are generally attenuated after adjustment, especially when switch rate and occupancy are included.}
+\begin{overpic}[width=\textwidth]{figures/appendix/a14_entropy_partial_sensitivity.png}
+\put(1,94){\panelletter{A}}\put(34,94){\panelletter{B}}\put(67,94){\panelletter{C}}
+\put(1,48){\panelletter{D}}\put(34,48){\panelletter{E}}\put(67,48){\panelletter{F}}
+\end{overpic}
+\caption{\textbf{Contextual sensitivity of entropy--cognition associations.}
+\textbf{(A)} $H_1$--general-factor association.
+\textbf{(B)} $H_1$--List-Sorting association.
+\textbf{(C)} $H_2$--List-Sorting association.
+\textbf{(D)} $H_{2,\mathrm{switch}}$--general-factor association.
+\textbf{(E)} $H_1$--Picture-Vocabulary association.
+\textbf{(F)} $H_2$--Penn-Matrix association.
+Each panel compares the unadjusted correlation with correlations adjusted for synchronization context, switching and occupancy, or all contextual measures.}
 \label{fig:app-entropy-partial}
 \end{figure}
 
 \begin{figure}[p]
 \centering
-\includegraphics[width=\textwidth,height=0.72\textheight,keepaspectratio]{figures/appendix/a15_entropy_cognition_heatmap.png}
-\caption{\textbf{Normalized entropy--cognition association matrix.} Cells report Pearson correlations for the four normalized entropy measures and seven cognitive outcomes. A plus sign denotes an uncorrected permutation result below 0.05; no cell survived false-discovery-rate correction across the full family.}
+\begin{overpic}[width=\textwidth]{figures/appendix/a15_entropy_cognition_heatmap.png}
+\put(1,94){\panelletter{A}}
+\end{overpic}
+\caption{\textbf{Normalized entropy--cognition association matrix.}
+\textbf{(A)} Pearson correlations between four normalized entropy measures and seven cognitive outcomes. A plus sign denotes an uncorrected permutation result below 0.05; no cell survived false-discovery-rate correction across the full family.}
 \label{fig:app-entropy-cognition}
 \end{figure}
 
