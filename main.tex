@@ -14,7 +14,7 @@
 \usepackage{graphicx}
 
 \usepackage{setspace}
-\onehalfspacing
+\setstretch{1.35}
 
 % amsmath is loaded by newtxmath; amssymb conflicts with newtxmath in pdfLaTeX
 \usepackage{booktabs}
@@ -757,7 +757,7 @@ The maximum occupancy principle models showed a mixed pattern. In the binary-act
 
 The stay-switch decomposition refined this pattern. Adding destination dispersion produced small improvements in conditional switch routing: $\Delta\mathrm{NLL}=0.002184$, $q=0.0289$; $\Delta\mathrm{MAE}=0.000374$, $q=0.0289$; $\Delta\mathrm{RMSE}=0.000619$, $q=0.00195$; and entropy-error improvement $0.002468$, $q=0.000433$. The effect was small, and off-diagonal routing remained better captured by geometric distance between state centroids (Table~\ref{tab:added_model_terms}; Appendix Figure~\ref{fig:app-stay-switch-mop}). The MOP interpretation follows the maximum occupancy principle proposed by Ramírez-Ruiz et al. (2024), but here it is tested only as a transition-model hypothesis.
 
-\begin{table}[H]
+\begin{table}[!htbp]
 \centering
 \compacttablestyle
 \caption{Effects of added model terms on held-out prediction.}
@@ -806,30 +806,30 @@ These effects were modest. The smallest permutation-FDR value was $q=0.0701$; no
 The multivariate explanatory analysis tested whether the full transition matrix contained cognitive information beyond single entropy summaries. The latest conditional ridge output changed all five performance estimates. Mean cross-validated correlations were $r=0.27145$ for List Sorting, $0.28958$ for Card Sorting, $0.26539$ for the general factor, $0.23590$ for Flanker, and $0.26627$ for Penn Matrix Reasoning. Valid permutation-family $q$-values were not generated, and the fixed outcome-informed masks make the current permutation null non-selection-aware. Corrected above-null claims should therefore be withheld. This analysis follows the general logic of connectome-based predictive modelling, where brain features are related to individual behavioural differences under cross-validation (Shen et al., 2017), but the present estimates are explanatory associations conditional on the full-sample feature mask rather than unbiased estimates of external predictive performance.
 
 
-% \begin{table}[H]
-% \centering
-% \compacttablestyle
-% \caption{Cross-validated explanatory mapping of cognition from transition probabilities.}
-% \label{tab:cognition_explanatory_mapping}
-% \scriptsize
-% \setstretch{1.0}
-% \renewcommand{\arraystretch}{0.80}
-% \begin{tabularx}{\textwidth}{@{}
-% >{\raggedright\arraybackslash}X
-% c c c
-% >{\raggedright\arraybackslash}p{0.20\textwidth}
-% @{}}
-% \toprule
-% \textbf{Cognitive target} & \textbf{CV corr.} & \textbf{$R^2$} & \textbf{Perm. $p$} & \textbf{Selection-aware $q$} \\
-% \midrule
-% List Sorting, working memory & 0.27145 & 0.07274 & 0.003992 & Pending valid selection-aware correction \\
-% Card Sort, cognitive flexibility & 0.28958 & 0.08024 & 0.001996 & Pending valid selection-aware correction \\
-% General factor, $g$ & 0.26539 & 0.06993 & 0.001996 & Pending valid selection-aware correction \\
-% Flanker, inhibitory control & 0.23590 & 0.05388 & 0.001996 & Pending valid selection-aware correction \\
-% Penn Matrix Reasoning, fluid reasoning & 0.26627 & 0.07028 & 0.001996 & Pending valid selection-aware correction \\
-% \bottomrule
-% \end{tabularx}
-% \end{table}
+\begin{table}[!htbp]
+\centering
+\compacttablestyle
+\caption{Cross-validated explanatory mapping of cognition from transition probabilities.}
+\label{tab:cognition_explanatory_mapping}
+\scriptsize
+\setstretch{1.0}
+\renewcommand{\arraystretch}{0.80}
+\begin{tabularx}{\textwidth}{@{}
+>{\raggedright\arraybackslash}X
+c c c
+>{\raggedright\arraybackslash}p{0.20\textwidth}
+@{}}
+\toprule
+\textbf{Cognitive target} & \textbf{CV corr.} & \textbf{$R^2$} & \textbf{Perm. $p$} & \textbf{Selection-aware $q$} \\
+\midrule
+List Sorting, working memory & 0.27145 & 0.07274 & 0.003992 & Pending valid selection-aware correction \\
+Card Sort, cognitive flexibility & 0.28958 & 0.08024 & 0.001996 & Pending valid selection-aware correction \\
+General factor, $g$ & 0.26539 & 0.06993 & 0.001996 & Pending valid selection-aware correction \\
+Flanker, inhibitory control & 0.23590 & 0.05388 & 0.001996 & Pending valid selection-aware correction \\
+Penn Matrix Reasoning, fluid reasoning & 0.26627 & 0.07028 & 0.001996 & Pending valid selection-aware correction \\
+\bottomrule
+\end{tabularx}
+\end{table}
 
 The observed repeated cross-validation results showed no consistent advantage for the nonlinear
 models over the ridge-dominant elastic net. For List Sorting, gradient boosting produced a
